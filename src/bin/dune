@@ -3,5 +3,5 @@
   (public_name Hello)
   (flags (:standard (-w -39)))
   (package Hello)
-  (libraries yojson ppx_deriving_yojson.runtime Util)
+  (libraries Hello.lib yojson ppx_deriving_yojson.runtime)
   (preprocess (pps ppx_deriving_yojson)))

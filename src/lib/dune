@@ -1,4 +1,6 @@
 (library
-  (name Util)
-  (public_name Util)
-  (libraries lambda-term lwt))
+  (name Protocol)
+  (public_name Hello.lib)
+  (flags (:standard (-w -39)))
+  (libraries lambda-term lwt yojson ppx_deriving_yojson.runtime)
+  (preprocess (pps ppx_deriving_yojson)))
