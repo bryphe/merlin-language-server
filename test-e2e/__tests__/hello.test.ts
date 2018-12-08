@@ -1,11 +1,14 @@
 import * as cp from 'child_process';
+import * as os from 'os';
 import * as path from 'path';
 import * as rpc from 'vscode-jsonrpc'
 
+let serverRootPath = path.join(__dirname, "..", "..", "_build", "install", "default", "bin");
+let serverBin = os.platform() === "win32" ? "Hello.exe" : "Hello";
+let serverPath = path.join(serverRootPath, serverBin);
+
 test('basic', () => {
     expect(1).toBe(1);
-
-    let serverPath = path.join(__dirname, "..", "..", "_build", "install", "default", "bin", "Hello.exe");
 
     let childProcess = cp.spawn(serverPath);
 
