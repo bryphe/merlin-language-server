@@ -10,8 +10,11 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.12",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.5",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.2",
+    "vscode-jsonrpc": "^4.0.0",
+    "vscode-languageserver-protocol": "^3.13.0"
   }
 }
