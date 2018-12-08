@@ -7,9 +7,7 @@ let serverRootPath = path.join(__dirname, "..", "..", "_build", "install", "defa
 let serverBin = os.platform() === "win32" ? "Hello.exe" : "Hello";
 let serverPath = path.join(serverRootPath, serverBin);
 
-test('basic', () => {
-    expect(1).toBe(1);
-
+export const start = () => {
     let childProcess = cp.spawn(serverPath);
 
     let connection = rpc.createMessageConnection(
@@ -21,22 +19,21 @@ test('basic', () => {
         console.log("Received data: " + d);
     })
 
+    connection.listen();
 
+    return connection;
+};
+
+export const exit = async (languageServer) => {
     let ret = new Promise((resolve, reject) => {
-        connection.onClose(() => {
+        languageServer.onClose(() => {
             console.log("Closing!");
             resolve();
         })
     })
 
-
     let notification = new rpc.NotificationType<string, void>('exit');
-
-    connection.listen();
-
-    connection.sendNotification(notification);
-
+    languageServer.sendNotification(notification);
 
     return ret;
-
-});
+};

@@ -39,19 +39,15 @@ while (!shouldClose^) {
     let str = Bytes.to_string(buffer);
 
     let json = Yojson.Safe.from_string(str);
-    let n = notification_of_yojson(json);
+    /* let n = notification_of_yojson(json); */
 
+    let method = json |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
 
-    switch (n) {
-    | Ok(v) => 
-            
-        if (String.equal(v.method, "exit")) {
-            prerr_endline ("EXIT RECEIVED");
-           shouldClose := true; 
-        } else {
-            prerr_endline ("EXIT NOT RECEIVED: " ++ v.method);
-        }
-    | Error(_) => prerr_endline ("Parse error: " ++ str);
+    if (String.equal(method, "exit")) {
+        prerr_endline ("EXIT RECEIVED");
+        shouldClose := true; 
+    } else {
+        prerr_endline ("EXIT NOT RECEIVED: " ++ method);
     }
 }
 
