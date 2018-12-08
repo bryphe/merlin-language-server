@@ -1,5 +1,7 @@
 (executable
   (name Hello)
   (public_name Hello)
+  (flags (:standard (-w -39)))
   (package Hello)
-  (libraries Util))
+  (libraries yojson ppx_deriving_yojson.runtime Util)
+  (preprocess (pps ppx_deriving_yojson)))

@@ -8,7 +8,16 @@ let id = Unix.descr_of_in_channel(stdin);
 
 /* let ic = Unix.in_channel_of_descr(stdin); */
 
-while (true) {
+ [@deriving yojson {strict: false} ]
+type notification = {
+    jsonrpc: string,   
+    method: string,
+}; 
+
+
+let shouldClose = ref(false);
+
+while (!shouldClose^) {
 	Thread.wait_read(id);
 	let contentLength = input_line(stdin);
 	/* let contentType = input_line(stdin); */
@@ -25,10 +34,25 @@ while (true) {
     /* Read message */
 
 	let buffer = Bytes.create(len);
-	let t = input(stdin, buffer, 0, len);
-    prerr_endline ("Got " ++ string_of_int(t) ++ "bytes, expected: " ++ string_of_int(len));
+	let _ = input(stdin, buffer, 0, len);
 
     let str = Bytes.to_string(buffer);
 
-	prerr_endline ("Hello, world2:" ++ getContentLength ++ " | " ++ str);
+    let json = Yojson.Safe.from_string(str);
+    let n = notification_of_yojson(json);
+
+
+    switch (n) {
+    | Ok(v) => 
+            
+        if (String.equal(v.method, "exit")) {
+            prerr_endline ("EXIT RECEIVED");
+           shouldClose := true; 
+        } else {
+            prerr_endline ("EXIT NOT RECEIVED: " ++ v.method);
+        }
+    | Error(_) => prerr_endline ("Parse error: " ++ str);
+    }
 }
+
+prerr_endline ("Closing");

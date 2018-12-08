@@ -14,18 +14,25 @@ test('basic', () => {
         new rpc.StreamMessageWriter(childProcess.stdin)
     );
 
-    let ret = new Promise((res, rej) => {
-        childProcess.stderr.on("data", (d) => {
-            console.log("Received data: " + d);
-            res();
-        })
-    });
+    childProcess.stderr.on("data", (d) => {
+        console.log("Received data: " + d);
+    })
 
-    let notification = new rpc.NotificationType<string, void>('testNotification');
+
+    let ret = new Promise((resolve, reject) => {
+        connection.onClose(() => {
+            console.log("Closing!");
+            resolve();
+        })
+    })
+
+
+    let notification = new rpc.NotificationType<string, void>('exit');
 
     connection.listen();
 
-    connection.sendNotification(notification, 'Hello World');
+    connection.sendNotification(notification);
+
 
     return ret;
 
