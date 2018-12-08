@@ -1,5 +1,7 @@
 open TestFramework;
 
+open Lib;
+
 [@deriving yojson]
 type emptyJson = {
     noop: string
@@ -63,7 +65,6 @@ describe("Protocol", ({test, describe}) => {
             let request = createRequestMessage();
             expect.bool(Protocol.isRequest(request)).toBe(true);
         });
-        
     })
 
     test("Hello world", ({expect}) => {
