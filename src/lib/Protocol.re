@@ -36,13 +36,15 @@ type initializeResult = {
 type initializeResponse = responseMessage(initializeResult);
 
 type request = 
-| Initialize(initializeRequestParams);
+| Initialize(initializeRequestParams)
+| UnknownRequest;
 
 type notification =
 | Exit;
 
 type response =
-| InitializeResult(initializeResult);
+| InitializeResult(initializeResult)
+| UnknownResponse;
 
 type message =
 | Request(request)
@@ -74,7 +76,34 @@ let isResponse = (msg: Yojson.Safe.json) => {
     hasResult(msg) && hasId(msg);    
 };
 
-let parse: string => message = (_msg) => {
-    /* let json = Yojson.Safe.from_string(msg); */
-    Notification(Exit);
+exception ParseException(string);
+
+let getOrThrow = (r: Result.result('t, string)) => {
+    switch(r) {
+    | Ok(v) => v
+    | _ => raise(ParseException("Error parsing!"))
+    }
+};
+
+let parseRequest = (msg: Yojson.Safe.json) => {
+
+    let method = msg |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
+
+    switch (method) {
+    | "initialize" => 
+        let v =initializeRequest_of_yojson(msg) |> getOrThrow;
+        Initialize(v.params);
+    | _ => UnknownRequest
+    };
+};
+
+let parse: string => message = (msg) => {
+
+    let p = Yojson.Safe.from_string(msg);
+
+    switch ((isNotification(p), isRequest(p), isResponse(p))) {
+    | (true, _, _) => Notification(Exit)
+    | (_, true, _) => Request(parseRequest(p))
+    | _ => Response(UnknownResponse)
+    };
 };
