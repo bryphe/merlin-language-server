@@ -1,4 +1,3 @@
-
 import * as LanguageServer from "./../src/LanguageServer"
 
 import * as Protocol from "vscode-languageserver-protocol"
@@ -8,21 +7,22 @@ test('basic', async () => {
     await LanguageServer.exit(languageServer);
 });
 
-// test('initialize with empty capabilities', async () => {
-//     let languageServer = LanguageServer.start();
+test('initialize with empty capabilities', async () => {
+    let languageServer = LanguageServer.start();
 
-//     let capabilities: Protocol.ClientCapabilities = {
+    let capabilities: Protocol.ClientCapabilities = {
            
-//     };
+    };
 
-//     let initializeParameters: Protocol.InitializeParams = {
-//         processId: process.pid,
-//         rootUri: process.cwd(),
-//         capabilities: capabilities,
-//         workspaceFolders: [],
-//     }
+    let initializeParameters: Protocol.InitializeParams = {
+        processId: process.pid,
+        rootUri: process.cwd(),
+        capabilities: capabilities,
+        workspaceFolders: [],
+    };
 
+    let result = await languageServer.sendRequest(Protocol.InitializeRequest.type, initializeParameters);
 
-//     await languageServer.sendRequest(Protocol.InitializeRequest.type, initializeParameters);
-//     await LanguageServer.exit(languageServer);
-// });
+    expect(result.capabilities).toBeTruthy();
+    await LanguageServer.exit(languageServer);
+});
