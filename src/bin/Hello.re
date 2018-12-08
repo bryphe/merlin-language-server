@@ -2,15 +2,12 @@
 
 open Lib;
 
-let onNotification = (notification: Lib.Protocol.notification, rpc) => {
-
-    switch(notification) {
-    | Exit => Rpc.stop(rpc)
-    /* | _ => prerr_endline ("Unknown notification!"); */
-    }
-    
-};
+let onNotification = (notification: Lib.Protocol.notification, rpc) =>
+  switch (notification) {
+  | Exit => Rpc.stop(rpc)
+  /* | _ => prerr_endline ("Unknown notification!"); */
+  };
 
 Rpc.start(~onNotification, stdin, stdout);
 
-prerr_endline ("Closing");
+prerr_endline("Closing");

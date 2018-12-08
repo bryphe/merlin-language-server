@@ -42,7 +42,7 @@ let start = (~onNotification, input: in_channel, output: out_channel) => {
     let result = Protocol.parse(str);
 
     switch (result) {
-    | Notification(v) => onNotification(v, rpc);
+    | Notification(v) => onNotification(v, rpc)
     | _ => prerr_endline("Unhandled message")
     };
   };
