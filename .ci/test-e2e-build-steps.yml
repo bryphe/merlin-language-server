@@ -1,0 +1,7 @@
+# Cross-platform set of build steps for building esy projects
+
+steps:
+  - script: |
+        cd test-e2e
+        npm install
+    displayName: 'test-e2e:npm install'
