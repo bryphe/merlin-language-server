@@ -5,6 +5,7 @@ open Lib;
 let onNotification = (notification: Lib.Protocol.notification, rpc) =>
   switch (notification) {
   | Exit => Rpc.stop(rpc)
+  | _ => prerr_endline("Unhandled notification!");
   /* | _ => prerr_endline ("Unknown notification!"); */
   };
 
@@ -21,7 +22,7 @@ let onRequest = (_rpc, request: Lib.Protocol.request) => {
         Lib.Protocol.initializeResult_to_yojson(initializeInfo);
     | DebugEcho(msg) => 
         Lib.Protocol.debugEchoParams_to_yojson(msg);
-    | _ => `Assoc([]);
+    | _ => `Null;
     }
 };
 

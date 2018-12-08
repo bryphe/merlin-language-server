@@ -13,7 +13,6 @@ type responseMessage('t) = {
 
 [@deriving yojson({strict: false})]
 type initializeRequestParams = {
-  processId: int,
   rootUri: string,
 };
 
@@ -46,7 +45,8 @@ type request =
   | UnknownRequest;
 
 type notification =
-  | Exit;
+  | Exit
+  | UnknownNotification;
 
 type response =
   | InitializeResult(initializeResult)
@@ -86,6 +86,17 @@ let getOrThrow = (r: Result.result('t, string)) =>
   | Error(e) => raise(ParseException("getOrThrow: Error parsing: " ++ e))
   };
 
+let parseNotification = (msg:Yojson.Safe.json) => {
+  let method =
+    msg |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
+
+  switch(method) {
+  | "exit" => Exit
+  | _ => UnknownNotification
+  }
+    
+}
+
 let parseRequest = (msg: Yojson.Safe.json) => {
   let method =
     msg |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
@@ -108,7 +119,9 @@ let parse: string => message =
     let p = Yojson.Safe.from_string(msg);
 
     switch (isNotification(p), isRequest(p), isResponse(p)) {
-    | (true, _, _) => Notification(Exit)
+    | (true, _, _) => 
+        let n = parseNotification(p);
+        Notification(n);
     | (_, true, _) => 
         let id = p |> Yojson.Safe.Util.member("id") |> Yojson.Safe.Util.to_int;
         prerr_endline ("GOT ID: " ++ string_of_int(id));
