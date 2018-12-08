@@ -10,6 +10,10 @@
         "hello"
       ]
     },
+    "install": [
+        "esy-installer Hello.install",
+        "esy-installer Hello-test.install"
+    ],
     "buildsInSource": "_build"
   },
   "dependencies": {
@@ -22,7 +26,8 @@
     "@opam/ppx_deriving_yojson": "*",
     "@opam/yojson": "*",
     "@esy-ocaml/reason": "*",
-    "refmterr": "*"
+    "refmterr": "*",
+    "@reason-native/rely": "*"
   },
   "resolutions": {
     "@esy-ocaml/esy-installer": "0.0.1",

@@ -23,9 +23,11 @@ while (!shouldClose^) {
 	/* let contentType = input_line(stdin); */
 
 	let preambleLength = String.length("Content-Length: ");
+    let postLength = String.length("\r\n");
     /* let postLength = String.length("\r\n"); */
 	/* let getContentLength = String.sub(contentLength, preambleLength, String.length(contentLength) - postLength - preambleLength + 1); */
-	let getContentLength = String.sub(contentLength, preambleLength, 2);
+	let getContentLength = String.sub(contentLength, preambleLength, String.length(contentLength) - postLength - preambleLength + 1);
+    prerr_endline( "|" ++ contentLength ++ "|");
     prerr_endline( "|" ++ getContentLength ++ "|");
  	let len = int_of_string(getContentLength);
 
@@ -37,17 +39,13 @@ while (!shouldClose^) {
 	let _ = input(stdin, buffer, 0, len);
 
     let str = Bytes.to_string(buffer);
+    prerr_endline ("Received msg: " ++ str);
 
-    let json = Yojson.Safe.from_string(str);
-    /* let n = notification_of_yojson(json); */
+    let result = Protocol.parse(str);
 
-    let method = json |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
-
-    if (String.equal(method, "exit")) {
-        prerr_endline ("EXIT RECEIVED");
-        shouldClose := true; 
-    } else {
-        prerr_endline ("EXIT NOT RECEIVED: " ++ method);
+    switch (result) {
+    | Notification(Exit) => shouldClose := true
+    | _ => prerr_endline ("Unhandled message");
     }
 }
 

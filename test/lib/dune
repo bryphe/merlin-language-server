@@ -1,0 +1,6 @@
+(library
+    (name HelloTest)
+    (public_name Hello-test.lib)
+    (ocamlopt_flags -linkall -g)
+    (libraries rely.lib)
+)
