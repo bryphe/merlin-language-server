@@ -5,3 +5,8 @@ steps:
         cd test-e2e
         npm install
     displayName: 'test-e2e:npm install'
+  - script: |
+      cd test-e2e
+      npm test
+    displayName: 'test-e2e:test'
+
