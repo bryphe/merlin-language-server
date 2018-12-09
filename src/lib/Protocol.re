@@ -1,18 +1,5 @@
 [@deriving yojson({strict: false})]
-type requestMessage('t) = {
-  id: int,
-  method: string,
-  params: 't,
-};
-
-[@deriving yojson({strict: false})]
-type responseMessage('t) = {
-  id: int,
-  result: 't,
-};
-
-[@deriving yojson({strict: false})]
-type initializeRequestParams = {
+type initializeParams = {
   rootUri: string,
 };
 
@@ -22,41 +9,73 @@ type debugEchoParams = {
 };
 
 [@deriving yojson({strict: false})]
-type initializeRequest = requestMessage(initializeRequestParams);
-
-[@deriving yojson({strict: false})]
-type debugEchoRequest = requestMessage(debugEchoParams);
-
-[@deriving yojson({strict: false})]
 type serverCapabilities = {textDocumentSync: int};
 
 [@deriving yojson({strict: false})]
 type initializeResult = {capabilities: serverCapabilities};
 
 [@deriving yojson({strict: false})]
-type initializeResponse = responseMessage(initializeResult);
+type documentUri = string;
 
 [@deriving yojson({strict: false})]
-type debugEchoResult = responseMessage(debugEchoParams);
+type textDocumentItem = {
+    uri: documentUri,
+    languageId: string,
+    /* version: int, */
+    text: string,
+};
+
+[@deriving yojson({strict: false})]
+type zeroBasedLine = int;
+
+[@deriving yojson({strict: false})]
+type zeroBasedCharacter = int;
+
+[@deriving yojson({strict: false})]
+type position = {
+    line: zeroBasedLine,
+    character: zeroBasedCharacter,
+};
+
+[@deriving yojson({strict: false})]
+type textDocumentIdentifier = {
+  uri: documentUri,
+};
+
+[@deriving yojson({strict: false})]
+type textDocumentPositionParams = {
+   textDocument: textDocumentIdentifier,
+   position: position,
+};
+
+[@deriving yojson({strict: false})]
+type didOpenTextDocumentParams = {
+    textDocument: textDocumentItem, 
+};
+
+[@deriving yojson({strict: false})]
+type hover = {
+    contents: string
+}
 
 type request =
-  | Initialize(initializeRequestParams)
   | DebugEcho(debugEchoParams)
+  | Initialize(initializeParams)
+  | TextDocumentHover(textDocumentPositionParams)
   | UnknownRequest;
 
 type notification =
+  | TextDocumentDidOpen(didOpenTextDocumentParams)
   | Exit
   | UnknownNotification;
 
 type response =
-  | InitializeResult(initializeResult)
-  | DebugEchoResult(debugEchoResult)
   | UnknownResponse;
 
 type message =
   | Request(int, request)
   | Notification(notification)
-  | Response(response);
+  | Response(response)
 
 let hasField = (f: string, msg: Yojson.Safe.json) => {
   let v = Yojson.Safe.Util.member(f, msg);
@@ -90,7 +109,13 @@ let parseNotification = (msg:Yojson.Safe.json) => {
   let method =
     msg |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
 
+  let params =
+     msg |> Yojson.Safe.Util.member("params");
+
   switch(method) {
+  | "textDocument/didOpen" =>
+    let msg = didOpenTextDocumentParams_of_yojson(params) |> getOrThrow;
+    TextDocumentDidOpen(msg);
   | "exit" => Exit
   | _ => UnknownNotification
   }
@@ -101,15 +126,20 @@ let parseRequest = (msg: Yojson.Safe.json) => {
   let method =
     msg |> Yojson.Safe.Util.member("method") |> Yojson.Safe.Util.to_string;
 
+  let params = msg |> Yojson.Safe.Util.member("params");
+
   prerr_endline ("GOT METHOD: " ++ method);
 
   switch (method) {
+  | "textDocument/hover" =>
+    let v = textDocumentPositionParams_of_yojson(params) |> getOrThrow;
+    TextDocumentHover(v);
   | "initialize" =>
-    let v = initializeRequest_of_yojson(msg) |> getOrThrow;
-    Initialize(v.params);
+    let v = initializeParams_of_yojson(params) |> getOrThrow;
+    Initialize(v);
   | "debug/echo" =>
-    let v = debugEchoRequest_of_yojson(msg) |> getOrThrow;
-    DebugEcho(v.params);
+    let v = debugEchoParams_of_yojson(params) |> getOrThrow;
+    DebugEcho(v);
   | _ => UnknownRequest
   };
 };

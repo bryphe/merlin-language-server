@@ -4,6 +4,7 @@ open Lib;
 
 let onNotification = (notification: Lib.Protocol.notification, rpc) =>
   switch (notification) {
+  | TextDocumentDidOpen(args) => prerr_endline("Got open notification for: " ++ args.textDocument.uri);
   | Exit => Rpc.stop(rpc)
   | _ => prerr_endline("Unhandled notification!");
   /* | _ => prerr_endline ("Unknown notification!"); */
@@ -18,6 +19,8 @@ let initializeInfo: Lib.Protocol.initializeResult = {
 
 let onRequest = (_rpc, request: Lib.Protocol.request) => {
     switch(request) {
+    | TextDocumentHover(_) => 
+            Lib.Protocol.hover_to_yojson({contents: "Hello World!"});
     | Initialize(_p) => 
         Lib.Protocol.initializeResult_to_yojson(initializeInfo);
     | DebugEcho(msg) => 
