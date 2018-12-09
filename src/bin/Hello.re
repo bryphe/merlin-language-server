@@ -19,6 +19,8 @@ let initializeInfo: Lib.Protocol.initializeResult = {
 
 let onRequest = (_rpc, request: Lib.Protocol.request) => {
     switch(request) {
+    | TextDocumentCompletion(_) =>
+        Lib.Protocol.completionList_to_yojson({ isIncomplete: false, items: [{label: "item1", detail: "item1 details"}]});
     | TextDocumentHover(_) => 
             Lib.Protocol.hover_to_yojson({contents: "Hello World!"});
     | Initialize(_p) => 

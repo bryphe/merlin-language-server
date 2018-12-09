@@ -56,12 +56,25 @@ type didOpenTextDocumentParams = {
 [@deriving yojson({strict: false})]
 type hover = {
     contents: string
-}
+};
+
+[@deriving yojson({strict: false})]
+type completionItem = {
+    label: string,
+    detail: string,
+};
+
+[@deriving yojson({strict: false})]
+type completionList = {
+    isIncomplete: bool,
+    items: list(completionItem),
+};
 
 type request =
   | DebugEcho(debugEchoParams)
   | Initialize(initializeParams)
   | TextDocumentHover(textDocumentPositionParams)
+  | TextDocumentCompletion(textDocumentPositionParams)
   | UnknownRequest;
 
 type notification =
@@ -131,6 +144,9 @@ let parseRequest = (msg: Yojson.Safe.json) => {
   prerr_endline ("GOT METHOD: " ++ method);
 
   switch (method) {
+  | "textDocument/completion" =>
+    let v = textDocumentPositionParams_of_yojson(params) |> getOrThrow;
+    TextDocumentCompletion(v);
   | "textDocument/hover" =>
     let v = textDocumentPositionParams_of_yojson(params) |> getOrThrow;
     TextDocumentHover(v);
