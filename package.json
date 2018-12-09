@@ -30,6 +30,7 @@
     "@reason-native/rely": "*"
   },
   "resolutions": {
+    "@esy-ocaml/reason": "facebook/reason#ab49908",
     "@esy-ocaml/esy-installer": "0.0.1",
     "@opam/menhir": "20171013",
     "@opam/re": "1.7.3"
