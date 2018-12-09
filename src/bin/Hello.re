@@ -22,7 +22,7 @@ let onRequest = (_rpc, request: Lib.Protocol.request) => {
     | TextDocumentCompletion(_) =>
         Lib.Protocol.completionList_to_yojson({ isIncomplete: false, items: [{label: "item1", detail: "item1 details"}]});
     | TextDocumentHover(_) => 
-            Lib.Protocol.hover_to_yojson({contents: "Hello World!"});
+        Lib.Protocol.hover_to_yojson({contents: "Hello World!"});
     | Initialize(_p) => 
         Lib.Protocol.initializeResult_to_yojson(initializeInfo);
     | DebugEcho(msg) => 

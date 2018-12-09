@@ -1,7 +1,7 @@
 {
-  "name": "Hello",
-  "version": "0.1.0",
-  "description": "OCaml workflow with Esy",
+  "name": "merlin-language-server",
+  "version": "1.0.0",
+  "description": "Reason LSP wrapper around merlin",
   "license": "MIT",
   "esy": {
     "build": "dune build --root . -j4",
