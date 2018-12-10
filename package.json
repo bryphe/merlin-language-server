@@ -11,7 +11,7 @@
       ]
     },
     "install": [
-        "esy-installer Hello.install",
+        "esy-installer merlin-language-server.install",
         "esy-installer merlin-language-server-test.install"
     ],
     "buildsInSource": "_build"
