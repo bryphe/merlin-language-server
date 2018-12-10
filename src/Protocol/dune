@@ -3,4 +3,4 @@
   (public_name Hello.protocol.lib)
   (flags (:standard (-w -39)))
   (libraries lambda-term lwt yojson ppx_deriving_yojson.runtime)
-  (preprocess (pps ppx_deriving_yojson)))
+  (preprocess (pps ppx_deriving_yojson ppx_pipebang)))

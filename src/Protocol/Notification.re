@@ -21,9 +21,9 @@ let parse = (msg: Yojson.Safe.json) => {
 
   switch (method) {
   | "textDocument/didOpen" =>
-    let msg =
-      didOpenTextDocumentParams_of_yojson(params) |> Utility.getResultOrThrow;
-    TextDocumentDidOpen(msg);
+    didOpenTextDocumentParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> TextDocumentDidOpen
   | "exit" => Exit
   | _ => UnknownNotification
   };

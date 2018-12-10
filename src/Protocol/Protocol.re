@@ -13,9 +13,7 @@ let parse: string => message =
     let p = Yojson.Safe.from_string(msg);
 
     switch (Notification.is(p), Request.is(p), Response.is(p)) {
-    | (true, _, _) =>
-      let n = Notification.parse(p);
-      Notification(n);
+    | (true, _, _) => Notification.parse(p) |> Notification
     | (_, true, _) =>
       let id = p |> Yojson.Safe.Util.member("id") |> Yojson.Safe.Util.to_int;
       Request(id, Request.parse(p));

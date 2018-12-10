@@ -16,7 +16,8 @@ type request =
 
 type t = request;
 
-let is = (msg: Yojson.Safe.json) => Utility.hasMethod(msg) && Utility.hasId(msg);
+let is = (msg: Yojson.Safe.json) =>
+  Utility.hasMethod(msg) && Utility.hasId(msg);
 
 let parse = (msg: Yojson.Safe.json) => {
   let method =
@@ -26,19 +27,21 @@ let parse = (msg: Yojson.Safe.json) => {
 
   switch (method) {
   | "textDocument/completion" =>
-    let v =
-      Types.textDocumentPositionParams_of_yojson(params) |> Utility.getResultOrThrow;
-    TextDocumentCompletion(v);
+    Types.textDocumentPositionParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> TextDocumentCompletion
   | "textDocument/hover" =>
-    let v =
-      Types.textDocumentPositionParams_of_yojson(params) |> Utility.getResultOrThrow;
-    TextDocumentHover(v);
+    Types.textDocumentPositionParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> TextDocumentHover
   | "initialize" =>
-    let v = initializeParams_of_yojson(params) |> Utility.getResultOrThrow;
-    Initialize(v);
+    initializeParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> Initialize
   | "debug/echo" =>
-    let v = Types.debugEchoParams_of_yojson(params) |> Utility.getResultOrThrow;
-    DebugEcho(v);
+    Types.debugEchoParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> DebugEcho
   | _ => UnknownRequest
   };
 };
