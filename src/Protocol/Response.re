@@ -26,4 +26,5 @@ type response =
 
 type t = response;
 
-let is = (msg: Yojson.Safe.json) => Utility.hasResult(msg) && Utility.hasId(msg);
+let is = (msg: Yojson.Safe.json) =>
+  Utility.hasResult(msg) && Utility.hasId(msg);
