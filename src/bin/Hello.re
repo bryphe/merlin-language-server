@@ -10,23 +10,22 @@ let onNotification = (notification: Protocol.Notification.t, rpc) =>
   /* | _ => prerr_endline ("Unknown notification!"); */
   };
 
-let initializeInfo: Lib.Protocol.initializeResult = {
+let initializeInfo: Lib.Protocol.Response.initializeResult = {
     capabilities: {
         textDocumentSync: 0, 
     }
 };
 
-
-let onRequest = (_rpc, request: Lib.Protocol.request) => {
+let onRequest = (_rpc, request: Lib.Protocol.Request.t) => {
     switch(request) {
     | TextDocumentCompletion(_) =>
         Lib.Protocol.completionList_to_yojson({ isIncomplete: false, items: [{label: "item1", detail: "item1 details"}]});
     | TextDocumentHover(_) => 
         Lib.Protocol.hover_to_yojson({contents: "Hello World!"});
     | Initialize(_p) => 
-        Lib.Protocol.initializeResult_to_yojson(initializeInfo);
+        Lib.Protocol.Response.initializeResult_to_yojson(initializeInfo);
     | DebugEcho(msg) => 
-        Lib.Protocol.debugEchoParams_to_yojson(msg);
+        Lib.Protocol.Types.debugEchoParams_to_yojson(msg);
     | _ => `Null;
     }
 };

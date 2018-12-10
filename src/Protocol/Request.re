@@ -7,18 +7,16 @@ type initializeParams = {rootUri: string};
 [@deriving yojson({strict: false})]
 type debugEchoParams = {message: string};
 
-[@deriving yojson({strict: false})]
-type serverCapabilities = {textDocumentSync: int};
-
-[@deriving yojson({strict: false})]
-type initializeResult = {capabilities: serverCapabilities};
-
 type request =
   | DebugEcho(Types.debugEchoParams)
   | Initialize(initializeParams)
   | TextDocumentHover(Types.textDocumentPositionParams)
   | TextDocumentCompletion(Types.textDocumentPositionParams)
   | UnknownRequest;
+
+type t = request;
+
+let is = (msg: Yojson.Safe.json) => Utility.hasMethod(msg) && Utility.hasId(msg);
 
 let parse = (msg: Yojson.Safe.json) => {
   let method =
@@ -28,24 +26,18 @@ let parse = (msg: Yojson.Safe.json) => {
 
   switch (method) {
   | "textDocument/completion" =>
-    let v = 
-        Types.textDocumentPositionParams_of_yojson(params) 
-        |> Utility.getOrThrow;
+    let v =
+      Types.textDocumentPositionParams_of_yojson(params) |> Utility.getResultOrThrow;
     TextDocumentCompletion(v);
   | "textDocument/hover" =>
-    let v = 
-        Types.textDocumentPositionParams_of_yojson(params) 
-        |> Utility.getOrThrow;
+    let v =
+      Types.textDocumentPositionParams_of_yojson(params) |> Utility.getResultOrThrow;
     TextDocumentHover(v);
   | "initialize" =>
-    let v = 
-        initializeParams_of_yojson(params) 
-        |> getOrThrow;
+    let v = initializeParams_of_yojson(params) |> Utility.getResultOrThrow;
     Initialize(v);
   | "debug/echo" =>
-    let v = 
-        debugEchoParams_of_yojson(params) 
-        |> getOrThrow;
+    let v = Types.debugEchoParams_of_yojson(params) |> Utility.getResultOrThrow;
     DebugEcho(v);
   | _ => UnknownRequest
   };
