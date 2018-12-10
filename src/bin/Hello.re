@@ -2,7 +2,7 @@
 
 open Lib;
 
-let onNotification = (notification: Lib.Protocol.notification, rpc) =>
+let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
   | TextDocumentDidOpen(args) => prerr_endline("Got open notification for: " ++ args.textDocument.uri);
   | Exit => Rpc.stop(rpc)
