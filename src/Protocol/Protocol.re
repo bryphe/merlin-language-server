@@ -2,14 +2,10 @@ module Notification = Notification;
 module Types = Types;
 
 [@deriving yojson({strict: false})]
-type initializeParams = {
-  rootUri: string,
-};
+type initializeParams = {rootUri: string};
 
 [@deriving yojson({strict: false})]
-type debugEchoParams = {
-   message: string 
-};
+type debugEchoParams = {message: string};
 
 [@deriving yojson({strict: false})]
 type serverCapabilities = {textDocumentSync: int};
@@ -18,25 +14,21 @@ type serverCapabilities = {textDocumentSync: int};
 type initializeResult = {capabilities: serverCapabilities};
 
 [@deriving yojson({strict: false})]
-type didOpenTextDocumentParams = {
-    textDocument: Types.textDocumentItem, 
-};
+type didOpenTextDocumentParams = {textDocument: Types.textDocumentItem};
 
 [@deriving yojson({strict: false})]
-type hover = {
-    contents: string
-};
+type hover = {contents: string};
 
 [@deriving yojson({strict: false})]
 type completionItem = {
-    label: string,
-    detail: string,
+  label: string,
+  detail: string,
 };
 
 [@deriving yojson({strict: false})]
 type completionList = {
-    isIncomplete: bool,
-    items: list(completionItem),
+  isIncomplete: bool,
+  items: list(completionItem),
 };
 
 type request =
@@ -52,7 +44,7 @@ type response =
 type message =
   | Request(int, request)
   | Notification(Notification.t)
-  | Response(response)
+  | Response(response);
 
 let hasField = (f: string, msg: Yojson.Safe.json) => {
   let v = Yojson.Safe.Util.member(f, msg);
@@ -85,7 +77,7 @@ let parseRequest = (msg: Yojson.Safe.json) => {
 
   let params = msg |> Yojson.Safe.Util.member("params");
 
-  prerr_endline ("GOT METHOD: " ++ method);
+  prerr_endline("GOT METHOD: " ++ method);
 
   switch (method) {
   | "textDocument/completion" =>
@@ -109,13 +101,13 @@ let parse: string => message =
     let p = Yojson.Safe.from_string(msg);
 
     switch (Notification.is(p), isRequest(p), isResponse(p)) {
-    | (true, _, _) => 
-        let n = Notification.parse(p);
-        Notification(n);
-    | (_, true, _) => 
-        let id = p |> Yojson.Safe.Util.member("id") |> Yojson.Safe.Util.to_int;
-        prerr_endline ("GOT ID: " ++ string_of_int(id));
-        Request(id, parseRequest(p))
+    | (true, _, _) =>
+      let n = Notification.parse(p);
+      Notification(n);
+    | (_, true, _) =>
+      let id = p |> Yojson.Safe.Util.member("id") |> Yojson.Safe.Util.to_int;
+      prerr_endline("GOT ID: " ++ string_of_int(id));
+      Request(id, parseRequest(p));
     | _ => Response(UnknownResponse)
     };
   };
