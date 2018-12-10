@@ -1,4 +1,5 @@
 module Notification = Notification;
+module Preamble = Preamble;
 module Request = Request;
 module Response = Response;
 module Types = Types;

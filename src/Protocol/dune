@@ -1,6 +1,6 @@
 (library
   (name Protocol)
-  (public_name Hello.protocol.lib)
+  (public_name merlin-language-server.protocol)
   (flags (:standard (-w -39)))
   (libraries lambda-term lwt yojson ppx_deriving_yojson.runtime)
   (preprocess (pps ppx_deriving_yojson)))
