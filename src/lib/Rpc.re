@@ -24,24 +24,11 @@ let start = (~onNotification, ~onRequest, input: in_channel, output: out_channel
   let id = Unix.descr_of_in_channel(stdin);
   while (!rpc.shouldClose) {
     Thread.wait_read(id);
-    let contentLength = input_line(input);
 
-    let preambleLength = String.length("Content-Length: ");
-    let postLength = String.length("\r\n");
-    let getContentLength =
-      String.sub(
-        contentLength,
-        preambleLength,
-        String.length(contentLength) - postLength - preambleLength + 1,
-      );
-    prerr_endline("|" ++ contentLength ++ "|");
-    prerr_endline("|" ++ getContentLength ++ "|");
-    let len = int_of_string(getContentLength);
-
-    let _ = input_line(input);
+    let preamble = Protocol.Preamble.read(input);
+    let len = preamble.contentLength;
 
     /* Read message */
-
     let buffer = Bytes.create(len);
     let _ = Pervasives.input(input, buffer, 0, len);
 

@@ -1,7 +1,7 @@
 (executable
-  (name Hello)
-  (public_name Hello)
+  (name Merlin_language_server)
+  (public_name merlin-language-server)
   (flags (:standard (-w -39)))
-  (package Hello)
-  (libraries Hello.lib yojson ppx_deriving_yojson.runtime)
+  (package merlin-language-server)
+  (libraries merlin-language-server.lib yojson ppx_deriving_yojson.runtime)
   (preprocess (pps ppx_deriving_yojson)))
