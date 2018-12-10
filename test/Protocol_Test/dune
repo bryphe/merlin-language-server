@@ -1,6 +1,6 @@
 (library
     (name Protocol_Test)
-    (public_name Hello-test.protocol.lib)
+    (public_name merlin-language-server-test.protocol)
     (flags (:standard (-w -39)))
     (ocamlopt_flags -linkall -g)
     (libraries yojson ppx_deriving_yojson.runtime rely.lib Hello.lib Hello.protocol.lib)
