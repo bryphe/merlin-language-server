@@ -37,7 +37,6 @@ let getContentLength = (s) => {
 }
 
 let parseLine = (~current:t=default, s: string) => {
-
     if (String.equal(s, "\r\n")) {
         let ret: t = {
             ...current,
@@ -54,5 +53,15 @@ let parseLine = (~current:t=default, s: string) => {
     } else {
         current
     };
-    
 };
+
+let read = (ic: in_channel) => {
+    let currentParseState = ref(default);
+
+    while((currentParseState^).isComplete == false) {
+        let line = input_line(ic);
+        currentParseState := parseLine(~current=currentParseState^, line ++ "\n");
+    }
+
+    currentParseState^;
+}

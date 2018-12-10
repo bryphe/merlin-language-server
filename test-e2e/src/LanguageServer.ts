@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as rpc from 'vscode-jsonrpc'
 
 let serverRootPath = path.join(__dirname, "..", "..", "_build", "install", "default", "bin");
-let serverBin = os.platform() === "win32" ? "Hello.exe" : "Hello";
+let serverBin = os.platform() === "win32" ? "merlin-language-server.exe" : "merlin-language-server";
 let serverPath = path.join(serverRootPath, serverBin);
 
 export const start = () => {
