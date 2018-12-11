@@ -1,3 +1,9 @@
+/*
+ * Protocol
+ * 
+ * Types and modules generally applicable to any language server
+ */
+
 module Notification = Notification;
 module Preamble = Preamble;
 module Request = Request;

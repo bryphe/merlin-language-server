@@ -5,13 +5,18 @@ module Types = Types;
 type initializeParams = {rootUri: string};
 
 [@deriving yojson({strict: false})]
-type debugEchoParams = {message: string};
+type debugGetDocumentParams = {uri: Types.documentUri};
 
 type request =
-  | DebugEcho(Types.debugEchoParams)
+  /* LSP requests */
   | Initialize(initializeParams)
   | TextDocumentHover(Types.textDocumentPositionParams)
   | TextDocumentCompletion(Types.textDocumentPositionParams)
+
+  /* Debug requests - internal use / debugging only */
+  | DebugEcho(Types.debugEchoParams)
+  | DebugTextDocumentGet(Types.textDocumentPositionParams)
+
   | UnknownRequest;
 
 type t = request;
@@ -42,6 +47,10 @@ let parse = (msg: Yojson.Safe.json) => {
     Types.debugEchoParams_of_yojson(params)
     |> Utility.getResultOrThrow
     |> DebugEcho
+  | "debug/textDocument/get" =>
+    Types.textDocumentPositionParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> DebugTextDocumentGet
   | _ => UnknownRequest
   };
 };

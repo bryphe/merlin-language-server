@@ -1,9 +1,10 @@
-/* let () = Lwt_main.run(Util.hello()); */
+module DocumentStore = Server.DocumentStore;
+
+let documentStore = DocumentStore.create();
 
 let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
-  | TextDocumentDidOpen(args) =>
-    prerr_endline("Got open notification for: " ++ args.textDocument.uri)
+  | TextDocumentDidOpen(args) => DocumentStore.openDocument(documentStore, args.textDocument);
   | Exit => Protocol.Rpc.stop(rpc)
   | _ => prerr_endline("Unhandled notification!")
   };
@@ -26,6 +27,12 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
   | Initialize(_p) =>
     Protocol.Response.initializeResult_to_yojson(initializeInfo)
   | DebugEcho(msg) => Protocol.Types.debugEchoParams_to_yojson(msg)
+  | DebugTextDocumentGet(f) => 
+    let doc = DocumentStore.getDocument(documentStore, f.textDocument.uri)
+    switch (doc) {
+    | Some(x) => `String(x.text)
+    | None => `Null
+    }
   | _ => `Null
   };
 };

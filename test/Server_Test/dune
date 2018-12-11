@@ -1,0 +1,8 @@
+(library
+    (name Server_Test)
+    (public_name merlin-language-server-test.server)
+    (flags (:standard (-w -39)))
+    (ocamlopt_flags -linkall -g)
+    (libraries yojson ppx_deriving_yojson.runtime rely.lib merlin-language-server.protocol merlin-language-server.server)
+    (preprocess (pps ppx_deriving_yojson))
+)
