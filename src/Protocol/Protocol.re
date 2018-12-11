@@ -2,6 +2,7 @@ module Notification = Notification;
 module Preamble = Preamble;
 module Request = Request;
 module Response = Response;
+module Rpc = Rpc;
 module Types = Types;
 
 type message =

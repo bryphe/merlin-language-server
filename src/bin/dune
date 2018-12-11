@@ -3,5 +3,5 @@
   (public_name merlin-language-server)
   (flags (:standard (-w -39)))
   (package merlin-language-server)
-  (libraries merlin-language-server.lib yojson ppx_deriving_yojson.runtime)
+  (libraries merlin-language-server.protocol yojson ppx_deriving_yojson.runtime)
   (preprocess (pps ppx_deriving_yojson)))
