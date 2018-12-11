@@ -3,8 +3,15 @@ open Types;
 [@deriving yojson({strict: false})]
 type didOpenTextDocumentParams = {textDocument: textDocumentItem};
 
+[@deriving yojson({strict: false})]
+type didChangeTextDocumentParams = {
+  textDocument: Types.versionedTextDocumentIdentifier,
+  contentChanges: list(textDocumentContentChangeEvent),
+};
+
 type notification =
   | TextDocumentDidOpen(didOpenTextDocumentParams)
+  | TextDocumentDidChange(didChangeTextDocumentParams)
   | Exit
   | UnknownNotification;
 
@@ -24,6 +31,10 @@ let parse = (msg: Yojson.Safe.json) => {
     didOpenTextDocumentParams_of_yojson(params)
     |> Utility.getResultOrThrow
     |> TextDocumentDidOpen
+  | "textDocument/didChange" =>
+    didChangeTextDocumentParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> TextDocumentDidChange
   | "exit" => Exit
   | _ => UnknownNotification
   };

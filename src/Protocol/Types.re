@@ -12,6 +12,20 @@ type textDocumentItem = {
 };
 
 [@deriving yojson({strict: false})]
+type versionedTextDocumentIdentifier = {
+  uri: documentUri,
+  version: option(int),
+};
+
+/* TODO: Change strict to false later */
+[@deriving yojson({strict: true})]
+type textDocumentContentChangeEvent = {
+  /* TODO: range */
+  /* TODO: rangeLength */
+  text: string,
+};
+
+[@deriving yojson({strict: false})]
 type zeroBasedLine = int;
 
 [@deriving yojson({strict: false})]

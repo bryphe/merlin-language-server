@@ -28,4 +28,24 @@ describe("TextDocument", () => {
             expect(result).toEqual("Hello, World!");
         });
     });
+
+    describe("didChange", () => {
+        it("updates text document", async () => {
+            await languageServer.sendNotification("textDocument/didOpen", {
+                textDocument: Types.TextDocumentItem.create("file:///test-document.txt", "txt", 0, "Hello, World!")
+            });
+
+            await languageServer.sendNotification("textDocument/didChange", {
+                textDocument: Types.VersionedTextDocumentIdentifier.create("file:///test-document.txt", 1),
+                contentChanges: [{text: "Hello again!"}],
+            })
+
+            let result = await languageServer.sendRequest("debug/textDocument/get", {
+                textDocument: Types.TextDocumentIdentifier.create("file:///test-document.txt"),
+                position: Types.Position.create(0, 0),
+            });
+
+            expect(result).toEqual("Hello again!");
+        });
+    });
 });
