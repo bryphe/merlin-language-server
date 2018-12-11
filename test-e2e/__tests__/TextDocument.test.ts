@@ -14,7 +14,6 @@ describe("TextDocument", () => {
         languageServer = null;
     });
 
-
     describe("didOpen", () => {
         it("stores text document", async () => {
             await languageServer.sendNotification("textDocument/didOpen", {
