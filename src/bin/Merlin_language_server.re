@@ -1,9 +1,10 @@
-/* let () = Lwt_main.run(Util.hello()); */
+module DocumentStore = Server.DocumentStore;
+
+let documentStore = DocumentStore.create();
 
 let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
-  | TextDocumentDidOpen(args) =>
-    prerr_endline("Got open notification for: " ++ args.textDocument.uri)
+  | TextDocumentDidOpen(args) => DocumentStore.openDocument(documentStore, args.textDocument);
   | Exit => Protocol.Rpc.stop(rpc)
   | _ => prerr_endline("Unhandled notification!")
   };
