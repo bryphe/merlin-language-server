@@ -4,7 +4,8 @@ let documentStore = DocumentStore.create();
 
 let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
-  | TextDocumentDidOpen(args) => DocumentStore.openDocument(documentStore, args.textDocument);
+  | TextDocumentDidOpen(v) => DocumentStore.openDocument(documentStore, v);
+  | TextDocumentDidChange(v) => DocumentStore.changeDocument(documentStore, v);
   | Exit => Protocol.Rpc.stop(rpc)
   | _ => prerr_endline("Unhandled notification!")
   };

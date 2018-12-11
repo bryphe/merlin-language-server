@@ -9,9 +9,11 @@ describe("DocumentStore", ({test, _}) => {
     DocumentStore.openDocument(
       store,
       {
-        uri: "file:///test-document.txt",
-        languageId: "txt",
-        text: "Hello\nWorld\n",
+        textDocument: {
+          uri: "file:///test-document.txt",
+          languageId: "txt",
+          text: "Hello\nWorld\n",
+        },
       },
     );
 

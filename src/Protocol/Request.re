@@ -12,11 +12,9 @@ type request =
   | Initialize(initializeParams)
   | TextDocumentHover(Types.textDocumentPositionParams)
   | TextDocumentCompletion(Types.textDocumentPositionParams)
-
   /* Debug requests - internal use / debugging only */
   | DebugEcho(Types.debugEchoParams)
   | DebugTextDocumentGet(Types.textDocumentPositionParams)
-
   | UnknownRequest;
 
 type t = request;

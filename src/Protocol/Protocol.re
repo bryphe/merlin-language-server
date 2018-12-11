@@ -1,6 +1,6 @@
 /*
  * Protocol
- * 
+ *
  * Types and modules generally applicable to any language server
  */
 
