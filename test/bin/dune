@@ -1,5 +1,5 @@
 (executable
     (name TestRunner)
     (public_name TestRunner.exe)
-    (libraries merlin-language-server-test.protocol)
+    (libraries merlin-language-server-test.protocol merlin-language-server-test.server)
     (package merlin-language-server-test))
