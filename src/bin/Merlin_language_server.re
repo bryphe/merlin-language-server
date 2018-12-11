@@ -27,6 +27,12 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
   | Initialize(_p) =>
     Protocol.Response.initializeResult_to_yojson(initializeInfo)
   | DebugEcho(msg) => Protocol.Types.debugEchoParams_to_yojson(msg)
+  | DebugTextDocumentGet(f) => 
+    let doc = DocumentStore.getDocument(documentStore, f.textDocument.uri)
+    switch (doc) {
+    | Some(x) => `String(x.text)
+    | None => `Null
+    }
   | _ => `Null
   };
 };

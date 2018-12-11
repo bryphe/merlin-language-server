@@ -3,12 +3,18 @@ import * as os from 'os';
 import * as path from 'path';
 import * as rpc from 'vscode-jsonrpc'
 
+import * as Protocol from "vscode-languageserver-protocol"
+import * as Rpc from "vscode-jsonrpc"
+
 let serverRootPath = path.join(__dirname, "..", "..", "_build", "install", "default", "bin");
 let serverBin = os.platform() === "win32" ? "merlin-language-server.exe" : "merlin-language-server";
 let serverPath = path.join(serverRootPath, serverBin);
 
-export const start = () => {
-    let childProcess = cp.spawn(serverPath);
+export type LanguageServer = Rpc.MessageConnection;
+
+export const start = (opts?: cp.SpawnOptions) => {
+    opts = opts || {};
+    let childProcess = cp.spawn(serverPath, opts);
 
     let connection = rpc.createMessageConnection(
         new rpc.StreamMessageReader(childProcess.stdout),
@@ -21,7 +27,23 @@ export const start = () => {
 
     connection.listen();
 
-    return connection;
+    return connection as LanguageServer;
+};
+
+export const startAndInitialize = async (opts?: cp.SpawnOptions) => {
+    let languageServer = start(opts);
+
+    let capabilities: Protocol.ClientCapabilities = { };
+
+    let initializeParameters: Protocol.InitializeParams = {
+        processId: process.pid,
+        rootUri: process.cwd(),
+        capabilities: capabilities,
+        workspaceFolders: [],
+    };
+
+    await languageServer.sendRequest(Protocol.InitializeRequest.type, initializeParameters);
+    return languageServer;
 };
 
 export const exit = async (languageServer) => {
