@@ -10,6 +10,15 @@ let startMerlin = () => {
   };
 };
 
+/* Sample case from:
+ * https://github.com/ocaml/merlin/blob/master/doc/dev/PROTOCOL.md
+ */
+
+let testFile = {|
+let x = 5
+let y = 3.0 *. x
+|};
+
 describe("Merlin", ({test, _}) => {
   test("get version", ({expect}) => {
     let merlin = startMerlin();
@@ -21,9 +30,9 @@ describe("Merlin", ({test, _}) => {
     let output =
       String.trim(
         Merlin.run(
-          ~input="let a = 1\r\n",
+          ~input=testFile,
           merlin,
-          [|"type-enclosing", "-position \"1:5\"", "-filename test.ml"|],
+          [|"type-enclosing", "-position \"2:5\"", "-filename test.ml"|],
         ),
       );
     let json = Yojson.Safe.from_string(output);
