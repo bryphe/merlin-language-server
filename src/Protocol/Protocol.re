@@ -10,6 +10,7 @@ module Request = Request;
 module Response = Response;
 module Rpc = Rpc;
 module Types = Types;
+module Utility = Utility;
 
 type message =
   | Request(int, Request.t)
