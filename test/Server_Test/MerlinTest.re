@@ -32,7 +32,7 @@ describe("Merlin", ({test, _}) => {
         Merlin.run(
           ~input=testFile,
           merlin,
-          [|"type-enclosing", "-position '2:5'", "-filename test.ml"|],
+          [|"type-enclosing", "-position", "2:5","-filename", "test.ml"|],
         ),
       );
     let json = Yojson.Safe.from_string(output);
