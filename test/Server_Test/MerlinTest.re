@@ -3,11 +3,11 @@ open TestFramework;
 module Merlin = Server.Merlin;
 
 let startMerlin = () => {
-  let merlinPath =
-    String.trim(
-      Rench.ChildProcess.spawnSync("where", [|"ocamlmerlin.exe"|]).stdout,
-    );
-  Merlin.init(merlinPath);
+  let merlinPath = Rench.Environment.which("ocamlmerlin");
+  switch (merlinPath) {
+  | Some(v) => Merlin.init(v)
+  | None => Merlin.init("ocamlmerlin");
+  };
 };
 
 describe("Merlin", ({test, _}) => {
