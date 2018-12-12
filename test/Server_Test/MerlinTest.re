@@ -20,26 +20,24 @@ let y = 3.0 *. x
 |};
 
 describe("Merlin", ({test, _}) => {
-  test("get version", ({expect}) => {
+  test("success case: simple type-enclosing case from docs", ({expect}) => {
     let merlin = startMerlin();
-    let vnum = String.trim(Merlin.run(~input="", merlin, [|"-vnum"|]));
-    expect.string(vnum).toEqual("v3.2.2");
+
+    let result = Merlin.getTypeEnclosing(merlin, {line: 2, col: 5},"test.ml", testFile);
+    switch (result) {
+    | Ok(r) => {
+        expect.string(List.hd(r).enclosingType).toEqual("int");
+    }
+    | _ => expect.bool(false).toBe(true);
+    }
   });
-  test("simple type-enclosing case from docs", ({expect}) => {
+  test("failure case: type-enclosing case from docs", ({expect}) => {
     let merlin = startMerlin();
-    let output =
-      String.trim(
-        Merlin.run(
-          ~input=testFile,
-          merlin,
-          [|"type-enclosing", "-position", "2:5","-filename", "test.ml"|],
-        ),
-      );
-    let json = Yojson.Safe.from_string(output);
-    let res =
-      Yojson.Safe.Util.member("value", json)
-      |> Merlin.typeEnclosingResult_of_yojson
-      |> Protocol.Utility.getResultOrThrow;
-    expect.string(List.hd(res).enclosingType).toEqual("int");
+
+    let result = Merlin.getTypeEnclosing(merlin, {line: 0, col:0},"test.ml", testFile);
+    switch (result) {
+    | Error(_) => expect.bool(true).toBe(true);
+    | Ok(_) => expect.bool(false).toBe(true);
+    }
   });
 });
