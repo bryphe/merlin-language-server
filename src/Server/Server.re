@@ -8,5 +8,3 @@
 
 module DocumentStore = DocumentStore;
 module Merlin = Merlin;
-
-print_endline("Hello world!");
