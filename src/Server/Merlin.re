@@ -130,15 +130,15 @@ let getErrors = (merlin: t, fileName: string, fileContents: string) => {
   let output =
     _run(~input=fileContents, merlin, [|"errors", "-filename", fileName|]);
 
-      let ret = _parse(output);
-      switch (ret) {
-      | Error(v) => Error(v)
-      | Return(json) =>
-        json
-        |> Protocol.errorResult_of_yojson
-        |> LspProtocol.Utility.getResultOrThrow
+  let ret = _parse(output);
+  switch (ret) {
+  | Error(v) => Error(v)
+  | Return(json) =>
+    json
+    |> Protocol.errorResult_of_yojson
+    |> LspProtocol.Utility.getResultOrThrow
     |> Ok
-    };
+  };
 };
 
 let getCompletePrefix =
