@@ -33,6 +33,18 @@ module Protocol = {
   [@deriving yojson({strict: false})]
   type typeEnclosingResult = list(typeEnclosingResultItem);
 
+  [@deriving yojson({strict: false})]
+  type completionResultItem = {
+    name: string,
+    kind: string,
+    desc: string,
+  };
+
+  [@deriving yojson({strict: false})]
+  type completionResult = {
+      entries: list(completionResultItem),
+  };
+
   type response =
     | Return(Yojson.Safe.json)
     | Error(string);
@@ -98,6 +110,37 @@ let getTypeEnclosing =
     json
     |> Protocol.typeEnclosingResult_of_yojson
     |> LspProtocol.Utility.getResultOrThrow
+    |> Ok
+  };
+};
+
+let getCompletePrefix =
+    (merlin: t, prefix: string, position: Position.t, fileName: string, fileContents: string) => {
+  let line = string_of_int(position.line);
+  let col = string_of_int(position.col);
+  let output =
+    _run(
+      ~input=fileContents,
+      merlin,
+      [|
+        "complete-prefix",
+        "-prefix",
+        prefix,
+        "-position",
+        line ++ ":" ++ col,
+        "-filename",
+        fileName,
+      |],
+    );
+        
+  let ret = _parse(output);
+  switch (ret) {
+  | Error(v) => Error(v)
+  | Return(json) =>
+    json
+    |> Protocol.completionResult_of_yojson
+    |> LspProtocol.Utility.getResultOrThrow
+    |> ((j: Protocol.completionResult) => j.entries)
     |> Ok
   };
 };
