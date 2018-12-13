@@ -69,5 +69,22 @@ describe("Merlin", ({describe, _}) => {
         | _ => expect.bool(false).toBe(true)
         };
       });
+
+      test("failure case: simple complete-prefix closing case from docs", ({expect}) => {
+        let merlin = startMerlin();
+
+        let result =
+          Merlin.getCompletePrefix(
+            merlin,
+            "List.m",
+            {line: 0, col: 0},
+            "test.ml",
+            testFile,
+          );
+        switch (result) {
+        | Ok(_) => expect.bool(true).toBeFalse();
+        | _ => expect.bool(true).toBeTrue();
+        };
+      });
   });
 });
