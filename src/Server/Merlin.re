@@ -35,13 +35,13 @@ module Protocol = {
 
   [@deriving yojson({strict: false})]
   type errorResultItem = {
-      message: string,
-      [@key "type"]
-      errorType: string,
-      [@key "start"]
-      startPosition: Position.t,
-      [@key "end"]
-      endPosition: Position.t,
+    message: string,
+    [@key "type"]
+    errorType: string,
+    [@key "start"]
+    startPosition: Position.t,
+    [@key "end"]
+    endPosition: Position.t,
   };
 
   [@deriving yojson({strict: false})]
@@ -116,18 +116,9 @@ let getTypeEnclosing =
   };
 };
 
-let getErrors =
-    (merlin: t, fileName: string, fileContents: string) => {
+let getErrors = (merlin: t, fileName: string, fileContents: string) => {
   let output =
-    _run(
-      ~input=fileContents,
-      merlin,
-      [|
-        "errors",
-        "-filename",
-        fileName,
-      |],
-    );
+    _run(~input=fileContents, merlin, [|"errors", "-filename", fileName|]);
 
   let ret = _parse(output);
   switch (ret) {
