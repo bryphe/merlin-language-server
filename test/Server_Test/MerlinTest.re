@@ -19,6 +19,11 @@ let x = 5
 let y = 3.0 *. x
 |};
 
+let testFileWithNoErrors = {|
+let x = 5
+let y = 3.0 *. float_of_int(x)
+|};
+
 describe("Merlin", ({describe, _}) => {
   describe("getTypeEnclosing", ({test, _}) => {
     test("success case: simple type-enclosing case from docs", ({expect}) => {
@@ -88,6 +93,29 @@ describe("Merlin", ({describe, _}) => {
       switch (result) {
       | Ok(_) => expect.bool(true).toBeFalse()
       | _ => expect.bool(true).toBeTrue()
+      };
+    });
+  });
+
+  describe("getErrors", ({test, _}) => {
+    test("no errors in file", ({expect}) => {
+      let merlin = startMerlin();
+
+      let result = Merlin.getErrors(merlin, "test.ml", testFileWithNoErrors);
+
+      switch (result) {
+      | Ok(r) => expect.int(List.length(r)).toBe(0)
+      | _ => expect.bool(false).toBe(true)
+      };
+    });
+    test("error in file", ({expect}) => {
+      let merlin = startMerlin();
+
+      let result = Merlin.getErrors(merlin, "test.ml", testFile);
+
+      switch (result) {
+      | Ok(r) => expect.int(List.length(r)).toBe(1)
+      | _ => expect.bool(false).toBe(true)
       };
     });
   });

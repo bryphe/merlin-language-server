@@ -34,6 +34,20 @@ module Protocol = {
   type typeEnclosingResult = list(typeEnclosingResultItem);
 
   [@deriving yojson({strict: false})]
+  type errorResultItem = {
+    message: string,
+    [@key "type"]
+    errorType: string,
+    [@key "start"]
+    startPosition: Position.t,
+    [@key "end"]
+    endPosition: Position.t,
+  };
+
+  [@deriving yojson({strict: false})]
+  type errorResult = list(errorResultItem);
+
+  [@deriving yojson({strict: false})]
   type completionResultItem = {
     name: string,
     kind: string,
@@ -107,6 +121,21 @@ let getTypeEnclosing =
   | Return(json) =>
     json
     |> Protocol.typeEnclosingResult_of_yojson
+    |> LspProtocol.Utility.getResultOrThrow
+    |> Ok
+  };
+};
+
+let getErrors = (merlin: t, fileName: string, fileContents: string) => {
+  let output =
+    _run(~input=fileContents, merlin, [|"errors", "-filename", fileName|]);
+
+  let ret = _parse(output);
+  switch (ret) {
+  | Error(v) => Error(v)
+  | Return(json) =>
+    json
+    |> Protocol.errorResult_of_yojson
     |> LspProtocol.Utility.getResultOrThrow
     |> Ok
   };
