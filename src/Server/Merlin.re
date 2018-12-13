@@ -41,9 +41,7 @@ module Protocol = {
   };
 
   [@deriving yojson({strict: false})]
-  type completionResult = {
-      entries: list(completionResultItem),
-  };
+  type completionResult = {entries: list(completionResultItem)};
 
   type response =
     | Return(Yojson.Safe.json)
@@ -115,7 +113,13 @@ let getTypeEnclosing =
 };
 
 let getCompletePrefix =
-    (merlin: t, prefix: string, position: Position.t, fileName: string, fileContents: string) => {
+    (
+      merlin: t,
+      prefix: string,
+      position: Position.t,
+      fileName: string,
+      fileContents: string,
+    ) => {
   let line = string_of_int(position.line);
   let col = string_of_int(position.col);
   let output =
@@ -132,7 +136,7 @@ let getCompletePrefix =
         fileName,
       |],
     );
-        
+
   let ret = _parse(output);
   switch (ret) {
   | Error(v) => Error(v)
