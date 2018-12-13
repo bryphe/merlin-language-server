@@ -7,5 +7,4 @@
 /* open Protocol; */
 
 module DocumentStore = DocumentStore;
-
-print_endline("Hello world!");
+module Merlin = Merlin;
