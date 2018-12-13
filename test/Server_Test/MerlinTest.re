@@ -19,7 +19,7 @@ let x = 5
 let y = 3.0 *. x
 |};
 
-describe("Merlin", ({test, _}) => {
+describe("Merlin", ({test}) => {
   test("success case: simple type-enclosing case from docs", ({expect}) => {
     let merlin = startMerlin();
 
