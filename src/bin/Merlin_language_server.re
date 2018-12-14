@@ -51,11 +51,17 @@ let initializeMerlin = () => {
 
 let onRequest = (_rpc, request: Protocol.Request.t) => {
   switch (request) {
-  | TextDocumentCompletion(_) =>
-    Protocol.Response.completionList_to_yojson({
-      isIncomplete: false,
-      items: [{label: "item1", detail: "item1 details"}],
-    })
+  | TextDocumentCompletion(tdp) =>
+    switch (merlin^) {
+    | None => `Null
+    | Some(m) => {
+        let completionList = MerlinLspBridge.completion(m, documentStore, tdp);
+        switch (completionList) {
+        | None => `Null
+        | Some(completionList) => Protocol.Response.completionList_to_yojson(completionList)
+        }
+    }
+    }
   | TextDocumentHover(tdp) =>
     switch (merlin^) {
     | None => `Null

@@ -96,3 +96,49 @@ let errors = (merlin: Merlin.t, store: DocumentStore.t, uri: LspProtocol.Types.d
     };
     
 };
+
+let _merlinCompletionToLspCompletion = (merlinEntry: Merlin.Protocol.completionResultItem) => {
+    let completionItem: LspProtocol.Response.completionItem = {
+        label: merlinEntry.name,
+        detail: merlinEntry.desc,
+    };
+    completionItem;
+}
+
+let _merlinCompletionsToLspCompletions = (merlinEntries: list(Merlin.Protocol.completionResultItem)) => {
+    List.map(_merlinCompletionToLspCompletion, merlinEntries);
+};
+
+let completion = (merlin: Merlin.t, store: DocumentStore.t, textDocumentPosition: LspProtocol.Types.textDocumentPositionParams) => {
+    let uri = textDocumentPosition.textDocument.uri;
+    let fileContents = switch(DocumentStore.getDocument(store, uri)) {
+    | Some(v) => v.text
+    | None => ""
+    };
+
+    let merlinPosition = textDocumentPosition.position |> _convertLspPositionToMerlinPosition;
+    let merlinFile = uri |> LspProtocol.Utility.uriToPath;
+
+    switch(DocumentStore.getTokenAt(store, uri, textDocumentPosition.position)) {
+    | None => None
+    | Some(v) => {
+        prerr_endline ("USING PREFIX: |" ++ v ++ "|");
+        let completions = Merlin.getCompletePrefix(merlin, v, merlinPosition, merlinFile, fileContents);
+
+        switch (completions) {
+        | Error(msg) =>
+            prerr_endline("ERROR: " ++ msg);
+            None
+        | Ok(v) => 
+            let completions = _merlinCompletionsToLspCompletions(v);
+            let completionList: LspProtocol.Response.completionList = {
+                isIncomplete: true,
+                items: completions,
+            };
+            Some(completionList);
+        };
+        }
+    }
+
+
+};
