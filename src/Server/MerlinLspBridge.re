@@ -53,3 +53,15 @@ let hover = (merlin: Merlin.t, store: DocumentStore.t, textDocumentPosition: Lsp
     | _ => None;
     };
 };
+
+let errors = (merlin: Merlin.t, store: DocumentStore.t, uri: LspProtocol.Types.documentUri) => {
+
+    let fileContents = switch(DocumentStore.getDocument(store, uri)) {
+    | None => None
+    | Some(v) => {
+       let merlinFile = uri |> LspProtocol.Utility.uriToPath; 
+       let errors = Merlin.getErrors(merlin, merlinFile, v.text);
+    }
+    };
+    
+};

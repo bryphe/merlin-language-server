@@ -38,6 +38,14 @@ type position = {
 };
 
 [@deriving yojson({strict: false})]
+type range = {
+    [@key "start"]
+    startPosition: position,
+    [@key "end"]
+    endPosition: position,
+}
+
+[@deriving yojson({strict: false})]
 type textDocumentIdentifier = {uri: documentUri};
 
 [@deriving yojson({strict: false})]
@@ -49,3 +57,9 @@ type textDocumentPositionParams = {
 /* Types used for debugging */
 [@deriving yojson({strict: false})]
 type debugEchoParams = {message: string};
+
+[@deriving yojson({strict: false})]
+type diagnostic = {
+    range: range,
+    message: string,
+}
