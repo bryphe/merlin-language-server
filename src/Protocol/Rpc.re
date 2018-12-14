@@ -22,8 +22,8 @@ let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
 };
 
 let sendNotification = (rpc: t, method: string, msg: Yojson.Safe.json) => {
-   let response = `Assoc([("method", `String(method)), ("params", msg)]) ;
-   _send(rpc, response);
+  let response = `Assoc([("method", `String(method)), ("params", msg)]);
+  _send(rpc, response);
 };
 
 type message =
@@ -69,10 +69,10 @@ let start =
     switch (result) {
     | Notification(v) => onNotification(v, rpc)
     | Request(id, v) =>
-      switch(onRequest(rpc, v)) {
-      | result => _sendResponse(rpc, result, id);
-      | exception Yojson.Json_error(msg) => prerr_endline ("ERROR: " ++ msg);
-      };
+      switch (onRequest(rpc, v)) {
+      | result => _sendResponse(rpc, result, id)
+      | exception (Yojson.Json_error(msg)) => prerr_endline("ERROR: " ++ msg)
+      }
     | _ => prerr_endline("Unhandled message")
     };
   };

@@ -22,14 +22,10 @@ let getResultOrThrow = (r: Result.result('t, string)) =>
   };
 
 let uriToPath = (~isWindows=Sys.win32, uri: Types.documentUri) => {
- 
-    let prefix = switch (isWindows) {
-    | true => "file:///"
-    | false => "file://"
-    };
+  let prefix = isWindows ? "file:///" : "file://";
 
-    let idx = String.length(prefix);
-    let l = String.length(uri) - idx;
+  let idx = String.length(prefix);
+  let l = String.length(uri) - idx;
 
-    String.sub(uri, idx, l)
+  String.sub(uri, idx, l);
 };

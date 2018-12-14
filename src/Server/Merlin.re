@@ -3,10 +3,13 @@ open Rench;
 module LspProtocol = Protocol;
 
 type mode =
-| Server
-| Single;
+  | Server
+  | Single;
 
-type t = {mode: mode, merlinPath: string};
+type t = {
+  mode,
+  merlinPath: string,
+};
 
 [@deriving yojson({strict: false})]
 type oneBasedLine = int;
@@ -91,23 +94,24 @@ let _parse = (json: Yojson.Safe.json) => {
 };
 
 let _run = (~input: string, merlin: t, command: array(string)) => {
-
-    let additionalPaths = "C:\\Users\\bryph\\.esy\\3_\\i\\esy_ocaml__s__reason-a9361120\\bin";
+  let additionalPaths = "C:\\Users\\bryph\\.esy\\3_\\i\\esy_ocaml__s__reason-a9361120\\bin";
   let env = Environment.getEnvironmentVariables();
   let currentPath = EnvironmentVariables.getValue(env, "PATH");
-  let augmentedPath = switch (currentPath) {
-  | Some(v) => additionalPaths ++ ";" ++ v 
-  | None => additionalPaths
-  };
+  let augmentedPath =
+    switch (currentPath) {
+    | Some(v) => additionalPaths ++ ";" ++ v
+    | None => additionalPaths
+    };
 
   let updatedEnv = EnvironmentVariables.setValue(env, "PATH", augmentedPath);
 
   let opts = ChildProcess.SpawnSyncOptions.create(~input, ());
 
-  let singleOrServer = switch(merlin.mode) {
-  | Single => "single"  
-  | Server => "server"
-  }
+  let singleOrServer =
+    switch (merlin.mode) {
+    | Single => "single"
+    | Server => "server"
+    };
 
   let proc =
     ChildProcess.spawnSync(
@@ -117,7 +121,7 @@ let _run = (~input: string, merlin: t, command: array(string)) => {
       Array.append([|singleOrServer|], command),
     );
 
-  prerr_endline ("---- 1.5! Merlin output: " ++ proc.stdout);
+  prerr_endline("---- 1.5! Merlin output: " ++ proc.stdout);
   proc.stdout |> Yojson.Safe.from_string;
 };
 
@@ -202,10 +206,10 @@ let getCompletePrefix =
 };
 
 let stopServer = (merlin: t) => {
-   switch (merlin.mode) {
-   | Server => {
-        let _ = _run(merlin, [|"stop-server"|]);
-        }
-   | Single => ();
-   };
+  switch (merlin.mode) {
+  | Server =>
+    let _ = _run(merlin, [|"stop-server"|]);
+    ();
+  | Single => ()
+  };
 };

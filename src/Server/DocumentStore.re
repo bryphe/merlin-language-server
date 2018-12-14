@@ -15,7 +15,6 @@ let openDocument =
   Hashtbl.add(store, uri, {uri, text, version: 0});
 };
 
-
 /*
  * Because we only implement full document syncing right now, this is basic,
  * but once we have incremental syncing, there will be more interesting logic here.
@@ -41,36 +40,42 @@ let getDocument = (store: t, uri: Protocol.Types.documentUri) => {
   Hashtbl.find_opt(store, uri);
 };
 
-let getDocumentLine = (store: t, uri: Protocol.Types.documentUri, line: Protocol.Types.zeroBasedLine) => {
-    switch (getDocument(store, uri)) {
-    | None => None
-    | Some(v) => {
-            let lines = v.text
-                |> String.split_on_char('\n')
-                |> Array.of_list;
+let getDocumentLine =
+    (
+      store: t,
+      uri: Protocol.Types.documentUri,
+      line: Protocol.Types.zeroBasedLine,
+    ) => {
+  switch (getDocument(store, uri)) {
+  | None => None
+  | Some(v) =>
+    let lines = v.text |> String.split_on_char('\n') |> Array.of_list;
 
-            switch (line < Array.length(lines)) {
-            | true => Some(lines[line])
-            | false => None
-            };
-        };
-    }
+    line < Array.length(lines) ? Some(lines[line]) : None;
+  };
 };
 
-let getTokenAt = (store: t, uri: Protocol.Types.documentUri, position: Protocol.Types.Position.t) => {
-    let line = getDocumentLine(store, uri, position.line);
+let getTokenAt =
+    (
+      store: t,
+      uri: Protocol.Types.documentUri,
+      position: Protocol.Types.Position.t,
+    ) => {
+  let line = getDocumentLine(store, uri, position.line);
 
-    switch (line) {
-    | None => None    
-    | Some(l) => {
-            /* Get first space prior to token */
-            let firstPriorSpace = String.rindex_from_opt(l, position.character, ' ');
-            let startPos = switch (firstPriorSpace) {
-            | Some(x) => x
-            | None => 0
-            };
-            prerr_endline ("--GET TOKEN AT: " ++ l ++ " start pos: " ++ string_of_int(startPos));
-            Some(String.sub(l, startPos, position.character - startPos));
-        }
-    };
+  switch (line) {
+  | None => None
+  | Some(l) =>
+    /* Get first space prior to token */
+    let firstPriorSpace = String.rindex_from_opt(l, position.character, ' ');
+    let startPos =
+      switch (firstPriorSpace) {
+      | Some(x) => x
+      | None => 0
+      };
+    prerr_endline(
+      "--GET TOKEN AT: " ++ l ++ " start pos: " ++ string_of_int(startPos),
+    );
+    Some(String.sub(l, startPos, position.character - startPos));
+  };
 };
