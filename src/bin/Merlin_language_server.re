@@ -41,6 +41,12 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
   | Initialize(_p) =>
     merlin := Some(initializeMerlin());
     Protocol.Response.initializeResult_to_yojson(initializeInfo)
+  | Shutdown =>
+    switch (merlin^) {
+    | Some(v) => Merlin.shutdown(v)
+    | None => ()
+    };
+    `Null
   | DebugEcho(msg) => Protocol.Types.debugEchoParams_to_yojson(msg)
   | DebugTextDocumentGet(f) => 
     let doc = DocumentStore.getDocument(documentStore, f.textDocument.uri)

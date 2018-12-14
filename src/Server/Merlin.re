@@ -92,7 +92,7 @@ let _run = (~input: string, merlin: t, command: array(string)) => {
     ChildProcess.spawnSync(
       ~opts,
       merlin.merlinPath,
-      Array.append([|"single"|], command),
+      Array.append([|"server"|], command),
     );
 
   proc.stdout |> Yojson.Safe.from_string;
@@ -177,3 +177,7 @@ let getCompletePrefix =
     |> Ok
   };
 };
+
+let stopServer = (merlin: t) => {
+   let _ = _run(merlin, [|"stop-server"]);
+}

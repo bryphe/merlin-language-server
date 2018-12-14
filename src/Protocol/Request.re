@@ -10,6 +10,7 @@ type debugGetDocumentParams = {uri: Types.documentUri};
 type request =
   /* LSP requests */
   | Initialize(initializeParams)
+  | Shutdown
   | TextDocumentHover(Types.textDocumentPositionParams)
   | TextDocumentCompletion(Types.textDocumentPositionParams)
   /* Debug requests - internal use / debugging only */
@@ -29,6 +30,7 @@ let parse = (msg: Yojson.Safe.json) => {
   let params = msg |> Yojson.Safe.Util.member("params");
 
   switch (method) {
+  | "shutdown" => Shutdown
   | "textDocument/completion" =>
     Types.textDocumentPositionParams_of_yojson(params)
     |> Utility.getResultOrThrow
