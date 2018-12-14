@@ -16,11 +16,11 @@ let openDocument =
   Hashtbl.add(store, uri, {uri, text, version: 0});
 };
 
+
 /*
  * Because we only implement full document syncing right now, this is basic,
  * but once we have incremental syncing, there will be more interesting logic here.
  */
-
 let changeDocument =
     (store: t, change: Protocol.Notification.didChangeTextDocumentParams) => {
   let text = List.hd(change.contentChanges).text;
@@ -40,4 +40,20 @@ let changeDocument =
 
 let getDocument = (store: t, uri: Protocol.Types.documentUri) => {
   Hashtbl.find_opt(store, uri);
+};
+
+let getDocumentLine = (store: t, uri: Protocol.Types.documentUri, line: Protocol.Types.zeroBasedLine) => {
+    switch (getDocument(store, uri)) {
+    | None => None
+    | Some(v) => {
+            let lines = v.text
+                |> String.split_on_char('\n')
+                |> Array.of_list;
+
+            switch (line < Array.length(lines)) {
+            | true => Some(lines[line])
+            | false => None
+            };
+        };
+    }
 };

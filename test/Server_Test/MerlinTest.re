@@ -24,6 +24,11 @@ let x = 5
 let y = 3.0 *. float_of_int(x)
 |};
 
+let testFileWithPartialPrefix = {|
+let x = 5
+let y = 3.0 *. float_of_int(x)
+|};
+
 describe("Merlin", ({describe, _}) => {
   describe("getTypeEnclosing", ({test, _}) => {
     test("success case: simple type-enclosing case from docs", ({expect}) => {
