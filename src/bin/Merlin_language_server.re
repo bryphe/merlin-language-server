@@ -1,6 +1,8 @@
 module DocumentStore = Server.DocumentStore;
+module Merlin = Server.Merlin;
 
 let documentStore = DocumentStore.create();
+let merlin: ref(option(Merlin.t)) = ref(None);
 
 let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
@@ -16,6 +18,16 @@ let initializeInfo: Protocol.Response.initializeResult = {
   },
 };
 
+let initializeMerlin = () => {
+   /* First, check if the MLS_MERLIN_PATH environment variable is set */
+    
+   let merlinPath = Rench.Environment.getEnvironmentVariable("MLS_MERLIN_PATH");
+   switch (merlinPath) {
+   | Some(x) => Merlin.init(merlinPath);
+   | None => Merlin.init("ocamlmerlin");
+   }
+};
+
 let onRequest = (_rpc, request: Protocol.Request.t) => {
   switch (request) {
   | TextDocumentCompletion(_) =>
@@ -24,8 +36,10 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
       items: [{label: "item1", detail: "item1 details"}],
     })
   | TextDocumentHover(_) =>
+    let response = Merlin.getTypeEnclosing(merlin, 
     Protocol.Response.hover_to_yojson({contents: "Hello World!"})
   | Initialize(_p) =>
+    merlin := Some(initializeMerlin());
     Protocol.Response.initializeResult_to_yojson(initializeInfo)
   | DebugEcho(msg) => Protocol.Types.debugEchoParams_to_yojson(msg)
   | DebugTextDocumentGet(f) => 
