@@ -5,10 +5,31 @@ module MerlinLspBridge = Server.MerlinLspBridge;
 let documentStore = DocumentStore.create();
 let merlin: ref(option(Merlin.t)) = ref(None);
 
+let sendErrors = (rpc, uri: Protocol.Types.documentUri, diagnostics: Protocol.Types.diagnostics) => {
+    let errorJson = Protocol.Types.diagnostics_to_yojson(diagnostics);
+    let error = `Assoc([("uri", `String(uri)), ("diagnostics", errorJson)]);
+    Protocol.Rpc.sendNotification(rpc, "textDocument/publishDiagnostics", error);
+};
+
+let checkErrors = (rpc, uri: Protocol.Types.documentUri) => {
+    switch (merlin^) {
+    | None => ()
+    | Some(m) => 
+        let errors = MerlinLspBridge.errors(m, documentStore, uri);
+        switch (errors) {
+        | Some(e) => sendErrors(rpc, uri, e)
+        | None => ()
+        }
+    };
+};
 let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
-  | TextDocumentDidOpen(v) => DocumentStore.openDocument(documentStore, v);
-  | TextDocumentDidChange(v) => DocumentStore.changeDocument(documentStore, v);
+  | TextDocumentDidOpen(v) => 
+        DocumentStore.openDocument(documentStore, v);
+        checkErrors(rpc, v.textDocument.uri);
+  | TextDocumentDidChange(v) => 
+        DocumentStore.changeDocument(documentStore, v);
+        checkErrors(rpc, v.textDocument.uri);
   | Exit => Protocol.Rpc.stop(rpc)
   | _ => prerr_endline("Unhandled notification!")
   };

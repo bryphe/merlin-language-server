@@ -7,7 +7,6 @@ type documentInfo = {
 type t = Hashtbl.t(string, documentInfo);
 
 let create: unit => t = () => Hashtbl.create(16);
-
 let openDocument =
     (store: t, documentItem: Protocol.Notification.didOpenTextDocumentParams) => {
   let uri = documentItem.textDocument.uri;

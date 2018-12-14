@@ -4,9 +4,8 @@ type t = {
   mutable shouldClose: bool,
 };
 
-let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
-  let response = `Assoc([("id", `Int(id)), ("result", msg)]);
-  let str = Yojson.Safe.to_string(response);
+let _send = (rpc, json: Yojson.Safe.json) => {
+  let str = Yojson.Safe.to_string(json);
 
   let length = String.length(str);
   let contentLengthString =
@@ -15,6 +14,16 @@ let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
   output_string(rpc.output, "\r\n");
   output_string(rpc.output, str);
   flush(rpc.output);
+};
+
+let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
+  let response = `Assoc([("id", `Int(id)), ("result", msg)]);
+  _send(rpc, response);
+};
+
+let sendNotification = (rpc: t, method: string, msg: Yojson.Safe.json) => {
+   let response = `Assoc([("method", `String(method)), ("params", msg)]) ;
+   _send(rpc, response);
 };
 
 type message =

@@ -31,18 +31,42 @@ type zeroBasedLine = int;
 [@deriving yojson({strict: false})]
 type zeroBasedCharacter = int;
 
-[@deriving yojson({strict: false})]
-type position = {
-  line: zeroBasedLine,
-  character: zeroBasedCharacter,
-};
+module Position = {
+    [@deriving yojson({strict: false})]
+    type t = {
+      line: zeroBasedLine,
+      character: zeroBasedCharacter,
+    };
 
+    let create = (line: zeroBasedLine, character: zeroBasedCharacter) => {
+        let ret: t = {
+            line,
+            character,
+        };
+        ret;
+    };
+}
+
+/* TODO: Refactor */
 [@deriving yojson({strict: false})]
-type range = {
-    [@key "start"]
-    startPosition: position,
-    [@key "end"]
-    endPosition: position,
+type position = Position.t;
+
+module Range {
+    [@deriving yojson({strict: false})]
+    type t = {
+        [@key "start"]
+        startPosition: position,
+        [@key "end"]
+        endPosition: position,
+    };
+
+    let create = (startPosition, endPosition) => {
+        let ret: t = {
+            startPosition,
+            endPosition,
+        };
+        ret;
+    };
 }
 
 [@deriving yojson({strict: false})]
@@ -60,6 +84,10 @@ type debugEchoParams = {message: string};
 
 [@deriving yojson({strict: false})]
 type diagnostic = {
-    range: range,
+    range: Range.t,
     message: string,
-}
+    severity: int,
+};
+
+[@deriving yojson({strict: false})]
+type diagnostics = list(diagnostic);

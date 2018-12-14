@@ -16,6 +16,14 @@ let _convertLspPositionToMerlinPosition: LspProtocol.Types.position => Merlin.Po
     pos;
 };
 
+let _convertMerlinPositionToLspPosition: Merlin.Position.t => LspProtocol.Types.position = (merlinPosition) => {
+    let pos: LspProtocol.Types.position = {
+        line: merlinPosition.line - 1,
+        character: merlinPosition.col,
+    };
+    pos;
+};
+
 let _getFirstEnclosingType = (types: Merlin.Protocol.typeEnclosingResult) => {
     switch (types) {
     | [] => None
@@ -32,8 +40,6 @@ let hover = (merlin: Merlin.t, store: DocumentStore.t, textDocumentPosition: Lsp
     | None => ""
     };
 
-    prerr_endline ("--- 1!: file contents: " ++ fileContents);
-
     let merlinPosition = textDocumentPosition.position |> _convertLspPositionToMerlinPosition;
     let merlinFile = uri |> LspProtocol.Utility.uriToPath;
 
@@ -44,7 +50,6 @@ let hover = (merlin: Merlin.t, store: DocumentStore.t, textDocumentPosition: Lsp
         switch (_getFirstEnclosingType(v)) {
         | Some(t) =>
             let ret: LspProtocol.Response.hover = {contents: t};    
-            prerr_endline("--- 2!: got hover");
             Some(ret);
         | None => None;
         }
@@ -54,13 +59,39 @@ let hover = (merlin: Merlin.t, store: DocumentStore.t, textDocumentPosition: Lsp
     };
 };
 
+let merlinErrorToLspError: Merlin.Protocol.errorResultItem => LspProtocol.Types.diagnostic = (merlinError) => {
+    let range = LspProtocol.Types.Range.create(
+        _convertMerlinPositionToLspPosition(merlinError.startPosition),
+        _convertMerlinPositionToLspPosition(merlinError.endPosition),
+    );
+
+    let ret: LspProtocol.Types.diagnostic = {
+        message: merlinError.message,
+        range,
+        severity: 1,
+    };
+
+    ret;
+}
+
 let errors = (merlin: Merlin.t, store: DocumentStore.t, uri: LspProtocol.Types.documentUri) => {
 
-    let fileContents = switch(DocumentStore.getDocument(store, uri)) {
+    switch(DocumentStore.getDocument(store, uri)) {
     | None => None
     | Some(v) => {
        let merlinFile = uri |> LspProtocol.Utility.uriToPath; 
        let errors = Merlin.getErrors(merlin, merlinFile, v.text);
+
+       switch(errors) {
+       | Error(msg) => 
+            prerr_endline ("ERROR: " ++ msg);
+            None
+       | Ok(e) => {
+            List.map(merlinErrorToLspError, e)
+            |> Some;
+       }
+
+       }
     }
     };
     
