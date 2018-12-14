@@ -36,7 +36,6 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
       items: [{label: "item1", detail: "item1 details"}],
     })
   | TextDocumentHover(_) =>
-    let response = Merlin.getTypeEnclosing(merlin, 
     Protocol.Response.hover_to_yojson({contents: "Hello World!"})
   | Initialize(_p) =>
     merlin := Some(initializeMerlin());
