@@ -60,8 +60,10 @@ let start =
     switch (result) {
     | Notification(v) => onNotification(v, rpc)
     | Request(id, v) =>
-      let result = onRequest(rpc, v);
-      _sendResponse(rpc, result, id);
+      switch(onRequest(rpc, v)) {
+      | result => _sendResponse(rpc, result, id);
+      | exception Yojson.Json_error(msg) => prerr_endline ("ERROR: " ++ msg);
+      };
     | _ => prerr_endline("Unhandled message")
     };
   };

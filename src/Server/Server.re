@@ -8,3 +8,4 @@
 
 module DocumentStore = DocumentStore;
 module Merlin = Merlin;
+module MerlinLspBridge = MerlinLspBridge;

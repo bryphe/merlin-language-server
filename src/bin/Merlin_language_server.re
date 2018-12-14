@@ -1,5 +1,6 @@
 module DocumentStore = Server.DocumentStore;
 module Merlin = Server.Merlin;
+module MerlinLspBridge = Server.MerlinLspBridge;
 
 let documentStore = DocumentStore.create();
 let merlin: ref(option(Merlin.t)) = ref(None);
@@ -23,7 +24,7 @@ let initializeMerlin = () => {
    let merlinPath = Rench.Environment.getEnvironmentVariable("MLS_MERLIN_PATH");
    switch (merlinPath) {
    | Some(v) => Merlin.init(Merlin.Single, v);
-   | None => Merlin.init(Merlin.Single, "ocamlmerlin");
+   | None => Merlin.init(Merlin.Single, "C:\\Users\\bryph\\.esy\\3_\\i\\opam__s__merlin-opam__c__3.2.2-9e36d08c\\bin\\ocamlmerlin.exe");
    }
 };
 
@@ -34,8 +35,17 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
       isIncomplete: false,
       items: [{label: "item1", detail: "item1 details"}],
     })
-  | TextDocumentHover(_) =>
-    Protocol.Response.hover_to_yojson({contents: "Hello World!"})
+  | TextDocumentHover(tdp) =>
+    switch (merlin^) {
+    | None => `Null
+    | Some(m) => {
+        let hoverResult = MerlinLspBridge.hover(m, documentStore, tdp);
+        switch (hoverResult) {
+        | Some(v) => Protocol.Response.hover_to_yojson(v)
+        | None => `Null
+        }
+        }
+    }
   | Initialize(_p) =>
     merlin := Some(initializeMerlin());
     Protocol.Response.initializeResult_to_yojson(initializeInfo)

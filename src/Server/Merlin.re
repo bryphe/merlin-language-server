@@ -91,6 +91,17 @@ let _parse = (json: Yojson.Safe.json) => {
 };
 
 let _run = (~input: string, merlin: t, command: array(string)) => {
+
+    let additionalPaths = "C:\\Users\\bryph\\.esy\\3_\\i\\esy_ocaml__s__reason-a9361120\\bin";
+  let env = Environment.getEnvironmentVariables();
+  let currentPath = EnvironmentVariables.getValue(env, "PATH");
+  let augmentedPath = switch (currentPath) {
+  | Some(v) => additionalPaths ++ ";" ++ v 
+  | None => additionalPaths
+  };
+
+  let updatedEnv = EnvironmentVariables.setValue(env, "PATH", augmentedPath);
+
   let opts = ChildProcess.SpawnSyncOptions.create(~input, ());
 
   let singleOrServer = switch(merlin.mode) {
@@ -100,11 +111,13 @@ let _run = (~input: string, merlin: t, command: array(string)) => {
 
   let proc =
     ChildProcess.spawnSync(
+      ~env=updatedEnv,
       ~opts,
       merlin.merlinPath,
       Array.append([|singleOrServer|], command),
     );
 
+  prerr_endline ("---- 1.5! Merlin output: " ++ proc.stdout);
   proc.stdout |> Yojson.Safe.from_string;
 };
 
