@@ -190,7 +190,9 @@ let getCompletePrefix =
 
 let stopServer = (merlin: t) => {
    switch (merlin.mode) {
-   | Server => let _ = _run(merlin, [|"stop-server"]);
+   | Server => {
+        let _ = _run(merlin, [|"stop-server"|]);
+        }
    | Single => ();
    };
 };

@@ -5,8 +5,8 @@ module Merlin = Server.Merlin;
 let startMerlin = () => {
   let merlinPath = Rench.Environment.which("ocamlmerlin");
   switch (merlinPath) {
-  | Some(v) => Merlin.init(v)
-  | None => Merlin.init("ocamlmerlin")
+  | Some(v) => Merlin.init(Merlin.Single, v)
+  | None => Merlin.init(Merlin.Single, "ocamlmerlin")
   };
 };
 
