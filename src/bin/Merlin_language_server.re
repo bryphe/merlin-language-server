@@ -42,15 +42,6 @@ let initializeInfo: Protocol.Response.initializeResult = {
   },
 };
 
-let initializeMerlin = () => {
-   /* First, check if the MLS_MERLIN_PATH environment variable is set */
-   let merlinPath = Rench.Environment.getEnvironmentVariable("MLS_MERLIN_PATH");
-   switch (merlinPath) {
-   | Some(v) => Merlin.init(Merlin.Single, v);
-   | None => Merlin.init(Merlin.Single, "C:\\Users\\bryph\\.esy\\3_\\i\\opam__s__merlin-opam__c__3.2.2-9e36d08c\\bin\\ocamlmerlin.exe");
-   }
-};
-
 let getMerlin = () => {
     switch(merlin^) {
     | Some(m) => Ok(m)
@@ -74,8 +65,8 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
     | Some(v) => Ok(Protocol.Response.hover_to_yojson(v))
     | None => Ok(`Null)
     }
-  | Initialize(_p) =>
-    merlin := Some(initializeMerlin());
+  | Initialize(initMsg) =>
+    merlin := Some(Server.MerlinDiscovery.discover(initMsg.rootUri));
     Ok(Protocol.Response.initializeResult_to_yojson(initializeInfo))
   | Shutdown =>
     let%bind merlin = getMerlin();
