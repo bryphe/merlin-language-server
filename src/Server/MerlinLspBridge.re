@@ -4,8 +4,7 @@
  * An interface between the LSP protocol <-> Merlin
  */
 
-/* open Rench; */
-
+module Log = Protocol.Log;
 module LspProtocol = Protocol;
 
 let _convertLspPositionToMerlinPosition:
@@ -141,7 +140,7 @@ let completion =
   switch (DocumentStore.getTokenAt(store, uri, textDocumentPosition.position)) {
   | None => None
   | Some(v) =>
-    prerr_endline("USING PREFIX: |" ++ v ++ "|");
+    Log.verbose("MerlinLspBridge::completion - using prefix: |" ++ v ++ "|");
     let completions =
       Merlin.getCompletePrefix(
         merlin,
@@ -153,7 +152,7 @@ let completion =
 
     switch (completions) {
     | Error(msg) =>
-      prerr_endline("ERROR: " ++ msg);
+      Log.error(msg);
       None;
     | Ok(v) =>
       let completions = _merlinCompletionsToLspCompletions(v);

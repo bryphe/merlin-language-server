@@ -35,7 +35,7 @@
     "@esy-ocaml/reason": "facebook/reason#ab49908",
     "@opam/menhir": "20171013",
     "@opam/re": "1.7.3",
-    "rench": "bryphe/rench#5ae63c6"
+    "rench": "bryphe/rench#980c38f"
   },
   "devDependencies": {
     "@opam/merlin": "^3.2.2",

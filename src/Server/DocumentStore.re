@@ -1,3 +1,5 @@
+module Log = Protocol.Log;
+
 type documentInfo = {
   uri: Protocol.Types.documentUri,
   text: string,
@@ -76,8 +78,8 @@ let getTokenAt =
       | Some(x) => x
       | None => 0
       };
-    prerr_endline(
-      "--GET TOKEN AT: " ++ l ++ " start pos: " ++ string_of_int(startPos),
+    Log.debug(
+      "DocumentStore::getTokenAt: " ++ l ++ " start pos: " ++ string_of_int(startPos),
     );
     Some(String.sub(l, startPos, position.character - startPos));
   };

@@ -1,6 +1,7 @@
 open Rench;
 
 module LspProtocol = Protocol;
+module Log = Protocol.Log;
 
 type mode =
   | Server
@@ -121,7 +122,6 @@ let _run = (~input: string, merlin: t, command: array(string)) => {
       Array.append([|singleOrServer|], command),
     );
 
-  prerr_endline("---- 1.5! Merlin output: " ++ proc.stdout);
   proc.stdout |> Yojson.Safe.from_string;
 };
 

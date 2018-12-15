@@ -4,6 +4,7 @@
  * Types and modules generally applicable to any language server
  */
 
+module Log = Log;
 module Notification = Notification;
 module Preamble = Preamble;
 module Request = Request;

@@ -62,7 +62,7 @@ let start =
     let _ = Pervasives.input(input, buffer, 0, len);
 
     let str = Bytes.to_string(buffer);
-    prerr_endline("Received msg: " ++ str);
+    Log.debug("Received msg: " ++ str);
 
     let result = parse(str);
 
@@ -71,9 +71,9 @@ let start =
     | Request(id, v) =>
       switch (onRequest(rpc, v)) {
       | result => _sendResponse(rpc, result, id)
-      | exception (Yojson.Json_error(msg)) => prerr_endline("ERROR: " ++ msg)
+      | exception (Yojson.Json_error(msg)) => Log.error("ERROR: " ++ msg)
       }
-    | _ => prerr_endline("Unhandled message")
+    | _ => Log.error("Unhandled message")
     };
   };
 };
