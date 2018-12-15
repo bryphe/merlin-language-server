@@ -25,6 +25,7 @@
     "@opam/ppx_deriving": "*",
     "@opam/ppx_pipebang": "*",
     "@opam/ppx_deriving_yojson": "*",
+    "@opam/ppx_let": "*",
     "@opam/yojson": "*",
     "@esy-ocaml/reason": "*",
     "refmterr": "*",

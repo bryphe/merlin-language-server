@@ -3,4 +3,4 @@
   (public_name merlin-language-server.server)
   (flags (:standard (-w -39)))
   (libraries lambda-term lwt Rench yojson ppx_deriving_yojson.runtime merlin-language-server.protocol)
-  (preprocess (pps ppx_deriving_yojson ppx_pipebang)))
+  (preprocess (pps ppx_let ppx_deriving_yojson ppx_pipebang)))

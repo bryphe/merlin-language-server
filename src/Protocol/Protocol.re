@@ -13,6 +13,8 @@ module Rpc = Rpc;
 module Types = Types;
 module Utility = Utility;
 
+module Ppx_let_syntax_result = Ppx_let_syntax_result;
+
 type message =
   | Request(int, Request.t)
   | Notification(Notification.t)

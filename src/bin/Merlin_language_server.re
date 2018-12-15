@@ -2,6 +2,8 @@ module DocumentStore = Server.DocumentStore;
 module Merlin = Server.Merlin;
 module MerlinLspBridge = Server.MerlinLspBridge;
 
+open Protocol.Ppx_let_syntax_result;
+
 let documentStore = DocumentStore.create();
 let merlin: ref(option(Merlin.t)) = ref(None);
 
@@ -49,47 +51,44 @@ let initializeMerlin = () => {
    }
 };
 
+let getMerlin = () => {
+    switch(merlin^) {
+    | Some(m) => Ok(m)
+    | None => Error("Unable to get merlin instance")
+    };
+}
+
 let onRequest = (_rpc, request: Protocol.Request.t) => {
   switch (request) {
   | TextDocumentCompletion(tdp) =>
-    switch (merlin^) {
-    | None => `Null
-    | Some(m) => {
-        let completionList = MerlinLspBridge.completion(m, documentStore, tdp);
-        switch (completionList) {
-        | None => `Null
-        | Some(completionList) => Protocol.Response.completionList_to_yojson(completionList)
-        }
-    }
+    let%bind merlin = getMerlin();
+    let completionList = MerlinLspBridge.completion(merlin, documentStore, tdp);
+    switch (completionList) {
+    | None => Ok(`Null)
+    | Some(completionList) => Ok(Protocol.Response.completionList_to_yojson(completionList))
     }
   | TextDocumentHover(tdp) =>
-    switch (merlin^) {
-    | None => `Null
-    | Some(m) => {
-        let hoverResult = MerlinLspBridge.hover(m, documentStore, tdp);
-        switch (hoverResult) {
-        | Some(v) => Protocol.Response.hover_to_yojson(v)
-        | None => `Null
-        }
-        }
+    let%bind merlin = getMerlin();
+    let hoverResult = MerlinLspBridge.hover(merlin, documentStore, tdp);
+    switch (hoverResult) {
+    | Some(v) => Ok(Protocol.Response.hover_to_yojson(v))
+    | None => Ok(`Null)
     }
   | Initialize(_p) =>
     merlin := Some(initializeMerlin());
-    Protocol.Response.initializeResult_to_yojson(initializeInfo)
+    Ok(Protocol.Response.initializeResult_to_yojson(initializeInfo))
   | Shutdown =>
-    switch (merlin^) {
-    | Some(v) => Merlin.stopServer(v)
-    | None => ()
-    };
-    `Null
-  | DebugEcho(msg) => Protocol.Types.debugEchoParams_to_yojson(msg)
+    let%bind merlin = getMerlin();
+    Merlin.stopServer(merlin);
+    Ok(`Null);
+  | DebugEcho(msg) => Ok(Protocol.Types.debugEchoParams_to_yojson(msg))
   | DebugTextDocumentGet(f) => 
     let doc = DocumentStore.getDocument(documentStore, f.textDocument.uri)
     switch (doc) {
-    | Some(x) => `String(x.text)
-    | None => `Null
+    | Some(x) => Ok(`String(x.text))
+    | None => Ok(`Null)
     }
-  | _ => `Null
+  | _ => Ok(`Null)
   };
 };
 
