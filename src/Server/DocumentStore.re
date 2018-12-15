@@ -67,7 +67,10 @@ let getTokenAt =
   | None => None
   | Some(l) =>
     /* Get first space prior to token */
-    let firstPriorSpace = String.rindex_from_opt(l, position.character, ' ');
+    let firstPriorSpace = switch(String.rindex_from_opt(l, position.character, ' ')) {
+    | v => v   
+    | exception Invalid_argument(_) => None
+    };
     let startPos =
       switch (firstPriorSpace) {
       | Some(x) => x
