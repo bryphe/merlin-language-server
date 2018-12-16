@@ -10,6 +10,7 @@ type mode =
 type t = {
   mode,
   merlinPath: string,
+  additionalPaths: list(string),
 };
 
 [@deriving yojson({strict: false})]
@@ -70,8 +71,8 @@ module Protocol = {
     | Error(string);
 };
 
-let init = (mode: mode, merlinPath: string) => {
-  let ret: t = {mode, merlinPath};
+let init = (mode: mode, merlinPath: string, additionalPaths: list(string)) => {
+  let ret: t = {mode, merlinPath, additionalPaths};
   ret;
 };
 
@@ -95,7 +96,7 @@ let _parse = (json: Yojson.Safe.json) => {
 };
 
 let _run = (~input: string, merlin: t, command: array(string)) => {
-  let additionalPaths = "C:\\Users\\bryph\\.esy\\3_\\i\\esy_ocaml__s__reason-a9361120\\bin";
+  let additionalPaths = String.concat(Rench.Path.pathSeparator, merlin.additionalPaths);
   let env = Environment.getEnvironmentVariables();
   let currentPath = EnvironmentVariables.getValue(env, "PATH");
   let augmentedPath =

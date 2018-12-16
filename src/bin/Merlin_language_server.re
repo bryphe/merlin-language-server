@@ -66,7 +66,7 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
     | None => Ok(`Null)
     }
   | Initialize(initMsg) =>
-    merlin := Some(Server.MerlinDiscovery.discover(initMsg.rootUri));
+    merlin := Server.MerlinDiscovery.discover(initMsg.rootUri)
     Ok(Protocol.Response.initializeResult_to_yojson(initializeInfo))
   | Shutdown =>
     let%bind merlin = getMerlin();

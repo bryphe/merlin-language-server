@@ -4,35 +4,80 @@
  * Helper module for finding Merlin in the current environment
  */
 
-let findMerlinInEnvironment = () => {
-   let merlinPath = Rench.Environment.getEnvironmentVariable("MLS_MERLIN_PATH");
-   switch (merlinPath) {
-   | Some(v) => Some(Merlin.init(Merlin.Single, v));
-   | None => None
-   }
+let createMerlinFromPaths = (merlinPath: option(string), merlinReasonPath: option(string)) => {
+        let additionalPaths = switch(merlinReasonPath) {
+        | Some(x) => 
+            prerr_endline ("USING OCAMLMERLIN-REASON PATH: "++ x);
+            [Rench.Path.dirname(x)]
+        | None => []
+        };
+
+        switch(merlinPath) {
+        | None => None    
+        | Some(x) => Some(Merlin.init(Merlin.Single, x, additionalPaths))
+        };
+    
 }
 
-/* let findMerlinWithEsy = (rootUri) => { */
-/*     let esyPath = Rench.Environment.which("esy"); */
+let findMerlinInEnvironmentOverride = () => {
+   let merlinPath = Rench.Environment.getEnvironmentVariable("MLS_MERLIN_PATH");
+   let reasonPath = Rench.Environment.getEnvironmentVariable("MLS_MERLIN_REASON_PATH");
+   createMerlinFromPaths(merlinPath, reasonPath);
+}
 
-/*     let whichOrWhere = switch(Sys.win32) { */
-/*     | true => "where" */
-/*     | false => "which" */
-/*     }; */
+let getBinaryFromEsySandbox = (cwd, esyPath, binaryName: string) => {
+    let whichOrWhere = switch(Sys.win32) {
+    | true => "where"
+    | false => "which"
+    };
 
-/*     switch (esyPath) { */
-/*     | Some(v) => { */
-/*        /1* There's an esy in the environment... let's see if we can find merlin in the project *1/ */ 
+    let where = Rench.ChildProcess.spawnSync(~cwd=Some(cwd), esyPath, [|whichOrWhere, binaryName|])
 
-/*         Rench.ChildProcess.spawnSync("esy", [|whichOrWhere, "ocamlmerlin"|]) */
-/*     } */
-/*     | None => None */
-/*     } */
-/* }; */
+    switch (where.exitCode) {
+    | 0 => where.stdout
+        |> String.split_on_char('\n')
+        |> List.hd
+        |> String.trim
+        |> Some
+    | _ => None
+    };
+};
 
-let discover = (_rootUri) => {
-    switch (findMerlinInEnvironment()) {
-    | Some(v) => v
-    | None => Merlin.init(Merlin.Single, "C:\\Users\\bryph\\.esy\\3_\\i\\opam__s__merlin-opam__c__3.2.2-9e36d08c\\bin\\ocamlmerlin.exe");
+let findMerlinWithEsy = (rootUri) => {
+
+    let esyPath = Rench.Environment.which("esy");
+
+    switch (esyPath) {
+    | Some(esy) => {
+       /* There's an esy in the environment... let's see if we can find merlin in the project */ 
+        let p = Protocol.Utility.uriToPath(rootUri);
+        let suffix = switch(Sys.win32) {
+        | true => ".cmd"   
+        | false => ""
+        };
+        let esy = esy ++ suffix;
+        prerr_endline ("LOOKING FOR MERLIN WITH ESY IN: " ++ p);
+        let merlinPath = getBinaryFromEsySandbox(p, esy, "ocamlmerlin");
+        let reasonPath = getBinaryFromEsySandbox(p, esy, "ocamlmerlin-reason");
+        createMerlinFromPaths(merlinPath, reasonPath);
+    }
+    | None => None
+    }
+};
+
+let findMerlinInEnvironment = () => {
+    let merlin = Rench.Environment.which("ocamlmerlin");
+    let reasonPath = Rench.Environment.which("ocamlmerlin-reason");
+
+    createMerlinFromPaths(merlin, reasonPath);
+}
+
+let discover = (rootUri) => {
+    switch (findMerlinInEnvironmentOverride()) {
+    | Some(v) => Some(v)
+    | None =>  switch(findMerlinWithEsy(rootUri)) {
+        | Some(v) => Some(v)
+        | None => findMerlinInEnvironment();
+    }
     }
 };
