@@ -85,4 +85,4 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
 
 Protocol.Rpc.start(~onNotification, ~onRequest, stdin, stdout);
 
-Protocol.Log.verbose("Closing");
+Protocol.Log.verbose("Merlin_language_server - closing");
