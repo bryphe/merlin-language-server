@@ -1,8 +1,17 @@
 open Rench;
 
 module LspProtocol = Protocol;
+module Log = Protocol.Log;
 
-type t = {merlinPath: string};
+type mode =
+  | Server
+  | Single;
+
+type t = {
+  mode,
+  merlinPath: string,
+  additionalPaths: list(string),
+};
 
 [@deriving yojson({strict: false})]
 type oneBasedLine = int;
@@ -62,8 +71,8 @@ module Protocol = {
     | Error(string);
 };
 
-let init = (merlinPath: string) => {
-  let ret: t = {merlinPath: merlinPath};
+let init = (mode: mode, merlinPath: string, additionalPaths: list(string)) => {
+  let ret: t = {mode, merlinPath, additionalPaths};
   ret;
 };
 
@@ -87,12 +96,32 @@ let _parse = (json: Yojson.Safe.json) => {
 };
 
 let _run = (~input: string, merlin: t, command: array(string)) => {
+  let additionalPaths =
+    String.concat(Rench.Path.pathSeparator, merlin.additionalPaths);
+  let env = Environment.getEnvironmentVariables();
+  let currentPath = EnvironmentVariables.getValue(env, "PATH");
+  let augmentedPath =
+    switch (currentPath) {
+    | Some(v) => additionalPaths ++ ";" ++ v
+    | None => additionalPaths
+    };
+
+  let updatedEnv = EnvironmentVariables.setValue(env, "PATH", augmentedPath);
+
   let opts = ChildProcess.SpawnSyncOptions.create(~input, ());
+
+  let singleOrServer =
+    switch (merlin.mode) {
+    | Single => "single"
+    | Server => "server"
+    };
+
   let proc =
     ChildProcess.spawnSync(
+      ~env=updatedEnv,
       ~opts,
       merlin.merlinPath,
-      Array.append([|"single"|], command),
+      Array.append([|singleOrServer|], command),
     );
 
   proc.stdout |> Yojson.Safe.from_string;
@@ -175,5 +204,14 @@ let getCompletePrefix =
     |> LspProtocol.Utility.getResultOrThrow
     |> ((j: Protocol.completionResult) => j.entries)
     |> Ok
+  };
+};
+
+let stopServer = (merlin: t) => {
+  switch (merlin.mode) {
+  | Server =>
+    let _ = _run(merlin, [|"stop-server"|]);
+    ();
+  | Single => ()
   };
 };

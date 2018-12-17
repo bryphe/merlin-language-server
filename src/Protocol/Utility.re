@@ -20,3 +20,12 @@ let getResultOrThrow = (r: Result.result('t, string)) =>
   | Ok(v) => v
   | Error(e) => raise(ParseException("getOrThrow: Error parsing: " ++ e))
   };
+
+let uriToPath = (~isWindows=Sys.win32, uri: Types.documentUri) => {
+  let prefix = isWindows ? "file:///" : "file://";
+
+  let idx = String.length(prefix);
+  let l = String.length(uri) - idx;
+
+  String.sub(uri, idx, l);
+};

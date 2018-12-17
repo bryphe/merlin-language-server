@@ -4,6 +4,7 @@
  * Types and modules generally applicable to any language server
  */
 
+module Log = Log;
 module Notification = Notification;
 module Preamble = Preamble;
 module Request = Request;
@@ -11,6 +12,8 @@ module Response = Response;
 module Rpc = Rpc;
 module Types = Types;
 module Utility = Utility;
+
+module Ppx_let_syntax_result = Ppx_let_syntax_result;
 
 type message =
   | Request(int, Request.t)

@@ -4,9 +4,8 @@ type t = {
   mutable shouldClose: bool,
 };
 
-let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
-  let response = `Assoc([("id", `Int(id)), ("result", msg)]);
-  let str = Yojson.Safe.to_string(response);
+let _send = (rpc, json: Yojson.Safe.json) => {
+  let str = Yojson.Safe.to_string(json);
 
   let length = String.length(str);
   let contentLengthString =
@@ -15,6 +14,16 @@ let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
   output_string(rpc.output, "\r\n");
   output_string(rpc.output, str);
   flush(rpc.output);
+};
+
+let _sendResponse = (rpc: t, msg: Yojson.Safe.json, id: int) => {
+  let response = `Assoc([("id", `Int(id)), ("result", msg)]);
+  _send(rpc, response);
+};
+
+let sendNotification = (rpc: t, method: string, msg: Yojson.Safe.json) => {
+  let response = `Assoc([("method", `String(method)), ("params", msg)]);
+  _send(rpc, response);
 };
 
 type message =
@@ -53,16 +62,19 @@ let start =
     let _ = Pervasives.input(input, buffer, 0, len);
 
     let str = Bytes.to_string(buffer);
-    prerr_endline("Received msg: " ++ str);
+    Log.debug("Received msg: " ++ str);
 
     let result = parse(str);
 
     switch (result) {
     | Notification(v) => onNotification(v, rpc)
     | Request(id, v) =>
-      let result = onRequest(rpc, v);
-      _sendResponse(rpc, result, id);
-    | _ => prerr_endline("Unhandled message")
+      switch (onRequest(rpc, v)) {
+      | Ok(result) => _sendResponse(rpc, result, id)
+      | Error(msg) => Log.error(msg)
+      | exception (Yojson.Json_error(msg)) => Log.error(msg)
+      }
+    | _ => Log.error("Unhandled message")
     };
   };
 };

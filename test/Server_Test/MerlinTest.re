@@ -5,8 +5,8 @@ module Merlin = Server.Merlin;
 let startMerlin = () => {
   let merlinPath = Rench.Environment.which("ocamlmerlin");
   switch (merlinPath) {
-  | Some(v) => Merlin.init(v)
-  | None => Merlin.init("ocamlmerlin")
+  | Some(v) => Merlin.init(Merlin.Single, v, [])
+  | None => Merlin.init(Merlin.Single, "ocamlmerlin", [])
   };
 };
 
@@ -20,6 +20,11 @@ let y = 3.0 *. x
 |};
 
 let testFileWithNoErrors = {|
+let x = 5
+let y = 3.0 *. float_of_int(x)
+|};
+
+let testFileWithPartialPrefix = {|
 let x = 5
 let y = 3.0 *. float_of_int(x)
 |};

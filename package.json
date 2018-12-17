@@ -25,6 +25,7 @@
     "@opam/ppx_deriving": "*",
     "@opam/ppx_pipebang": "*",
     "@opam/ppx_deriving_yojson": "*",
+    "@opam/ppx_let": "*",
     "@opam/yojson": "*",
     "@esy-ocaml/reason": "*",
     "refmterr": "*",
@@ -32,10 +33,11 @@
     "rench": "*"
   },
   "resolutions": {
+    "@opam/ppx_deriving_yojson": "3.1",
     "@esy-ocaml/reason": "facebook/reason#ab49908",
     "@opam/menhir": "20171013",
     "@opam/re": "1.7.3",
-    "rench": "bryphe/rench#fba6966"
+    "rench": "bryphe/rench#d877058"
   },
   "devDependencies": {
     "@opam/merlin": "^3.2.2",

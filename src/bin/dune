@@ -4,4 +4,4 @@
   (flags (:standard (-w -39)))
   (package merlin-language-server)
   (libraries merlin-language-server.protocol merlin-language-server.server yojson ppx_deriving_yojson.runtime)
-  (preprocess (pps ppx_deriving_yojson)))
+  (preprocess (pps ppx_let ppx_deriving_yojson)))
