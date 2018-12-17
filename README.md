@@ -54,9 +54,9 @@ In the future, perhaps we could integrate this more fully into `merlin` at some 
 ### Roadmap
 
 - Distribution
-    - First-class Oni integration
-    - VSCode Plugin
-    - NPM package with pre-built binaries
+    - [ ] First-class Oni integration
+    - [ ] VSCode Plugin
+    - [ ] NPM package with pre-built binaries
 - Features
     - Text synchronization
         - [x] `textDocument/didOpen`
