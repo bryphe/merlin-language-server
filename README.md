@@ -25,9 +25,9 @@ The current language-server landspace could be summarized with this table:
 
 > __NOTE (1):__ I believe `ocaml-language-server` may support Windows, but I was not able to get it working.
 
-> __NOTE (2):__ `reason-language-server` mentions Windows support as a goal, but again, it did not work for me. I tried hard to get it working (submitting various PRs [#36](https://github.com/jaredly/reason-language-server/pull/36), [#130](https://github.com/jaredly/reason-language-server/pull/130), [#199](https://github.com/jaredly/reason-language-server/pull/199)), but there is still significant investment that would need to be done.
+> __NOTE (2):__ `reason-language-server` mentions Windows support as a goal, but again, it did not work for me. I contributed several fixes towards this (PRs [#36](https://github.com/jaredly/reason-language-server/pull/36), [#130](https://github.com/jaredly/reason-language-server/pull/130), [#199](https://github.com/jaredly/reason-language-server/pull/199)), but there is still significant investment required to get support on parity with `merlin` on Windows.
 
-My biggest issue was that there was not a language server implementation that worked well for me on Windows. It turns out that `merlin` works great on Windows - so having a native-reason LSP implementation that uses `merlin` seems like a natural choice. 
+The primary issue for me being that there was not a language server implementation that worked well for me on Windows. It turns out that `merlin` works great on Windows - so having a native-reason LSP implementation that uses `merlin` is a natural choice. 
 
 In the future, perhaps we could integrate this more fully into `merlin` at some point, or incorporate `merlin` as a library that we call directly.
 
@@ -51,3 +51,37 @@ In the future, perhaps we could integrate this more fully into `merlin` at some 
     - `npm install`
     - `npm test`
 
+### Roadmap
+
+- Distribution
+    - First-class Oni integration
+    - VSCode Plugin
+    - NPM package with pre-built binaries
+- Features
+    - Text synchronization
+        - [x] `textDocument/didOpen`
+        - [x] `textDocument/didChange`
+        - [x] Full document sync
+        - [ ] Incremental document sync
+    - Language Features
+        - [x] `completion`
+        - [x] `hover`
+        - [ ] `definition`
+        - [ ] `implementation`
+        - [ ] `references`
+        - [ ] `singatureHelp`
+        - [ ] `codeAction`?
+        - [ ] `codeLens`
+        - [ ] `formatting`
+        - [ ] `rangeFormatting`
+        - [ ] `onTypeFormatting`
+
+### Contributions
+
+Contributions & PRs are welcome! Please ensure that test coverage is added for any new functionality - either in the form of unit tests or E2E tests.
+
+### License
+
+[MIT License](LICENSE)
+
+Copyright 2018 Bryan Phelps
