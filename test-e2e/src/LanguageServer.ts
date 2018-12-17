@@ -12,8 +12,16 @@ let serverPath = path.join(serverRootPath, serverBin);
 
 export type LanguageServer = Rpc.MessageConnection;
 
+let prefix = process.platform === "win32" ? "file:///" : "file://";
+
+export const toURI = (s) => {
+    return prefix + s;
+};
+
 export const start = (opts?: cp.SpawnOptions) => {
-    opts = opts || {};
+    opts = opts || {
+        env: process.env,
+    };
     let childProcess = cp.spawn(serverPath, opts);
 
     let connection = rpc.createMessageConnection(
@@ -37,12 +45,14 @@ export const startAndInitialize = async (opts?: cp.SpawnOptions) => {
 
     let initializeParameters: Protocol.InitializeParams = {
         processId: process.pid,
-        rootUri: process.cwd(),
+        rootUri: toURI(path.join(process.cwd(), "..")),
         capabilities: capabilities,
         workspaceFolders: [],
     };
 
-    await languageServer.sendRequest(Protocol.InitializeRequest.type, initializeParameters);
+
+    let result = await languageServer.sendRequest(Protocol.InitializeRequest.type, initializeParameters);
+    console.dir(result);
     return languageServer;
 };
 

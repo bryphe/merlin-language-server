@@ -9,7 +9,7 @@ let createMerlinFromPaths =
   let additionalPaths =
     switch (merlinReasonPath) {
     | Some(x) =>
-      prerr_endline("USING OCAMLMERLIN-REASON PATH: " ++ x);
+      prerr_endline("MerlinDiscovery::createMerlinFromPaths - using ocamlmerlin-reason path:" ++ x);
       [Rench.Path.dirname(x)];
     | None => []
     };

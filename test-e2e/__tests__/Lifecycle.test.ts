@@ -1,6 +1,8 @@
-import * as LanguageServer from "./../src/LanguageServer"
+import * as path from "path"
 
 import * as Protocol from "vscode-languageserver-protocol"
+
+import * as LanguageServer from "./../src/LanguageServer"
 
 test('basic', async () => {
     let languageServer = LanguageServer.start();
@@ -16,7 +18,7 @@ test('initialize with empty capabilities', async () => {
 
     let initializeParameters: Protocol.InitializeParams = {
         processId: process.pid,
-        rootUri: process.cwd(),
+        rootUri: LanguageServer.toURI(path.join(process.cwd(), "..")),
         capabilities: capabilities,
         workspaceFolders: [],
     };
