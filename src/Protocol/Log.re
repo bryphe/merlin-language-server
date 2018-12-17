@@ -1,17 +1,17 @@
 /* Simple log helper */
 
 let error = (msg: string) => {
-    prerr_endline("[ERROR] " ++ msg);
-}
+  prerr_endline("[ERROR] " ++ msg);
+};
 
 let debug = (msg: string) => {
-    prerr_endline("[DEBUG] " ++ msg);
-}
+  prerr_endline("[DEBUG] " ++ msg);
+};
 
 let verbose = (msg: string) => {
-    prerr_endline("[VERBOSE] " ++ msg);    
+  prerr_endline("[VERBOSE] " ++ msg);
 };
 
 let info = (msg: string) => {
-    prerr_endline("[INFO] " ++ msg);    
+  prerr_endline("[INFO] " ++ msg);
 };

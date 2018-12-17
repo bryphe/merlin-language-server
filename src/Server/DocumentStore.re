@@ -69,17 +69,21 @@ let getTokenAt =
   | None => None
   | Some(l) =>
     /* Get first space prior to token */
-    let firstPriorSpace = switch(String.rindex_from_opt(l, position.character, ' ')) {
-    | v => v   
-    | exception Invalid_argument(_) => None
-    };
+    let firstPriorSpace =
+      switch (String.rindex_from_opt(l, position.character, ' ')) {
+      | v => v
+      | exception (Invalid_argument(_)) => None
+      };
     let startPos =
       switch (firstPriorSpace) {
       | Some(x) => x
       | None => 0
       };
     Log.debug(
-      "DocumentStore::getTokenAt: " ++ l ++ " start pos: " ++ string_of_int(startPos),
+      "DocumentStore::getTokenAt: "
+      ++ l
+      ++ " start pos: "
+      ++ string_of_int(startPos),
     );
     Some(String.sub(l, startPos, position.character - startPos));
   };

@@ -96,7 +96,8 @@ let _parse = (json: Yojson.Safe.json) => {
 };
 
 let _run = (~input: string, merlin: t, command: array(string)) => {
-  let additionalPaths = String.concat(Rench.Path.pathSeparator, merlin.additionalPaths);
+  let additionalPaths =
+    String.concat(Rench.Path.pathSeparator, merlin.additionalPaths);
   let env = Environment.getEnvironmentVariables();
   let currentPath = EnvironmentVariables.getValue(env, "PATH");
   let augmentedPath =
