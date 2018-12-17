@@ -7,7 +7,7 @@
 
 ### Overview
 
-`merlin-language-server` is a thin wrapper over the excellent [`merlin`](https://github.com/ocaml/merlin) tooling - implementing the LSP protocol on-top of [`merlin`'s protocol](TODO). 
+`merlin-language-server` is a thin wrapper over the excellent [`merlin`](https://github.com/ocaml/merlin) tooling - implementing the LSP protocol on-top of [`merlin`'s protocol](https://github.com/ocaml/merlin/blob/master/doc/dev/PROTOCOL.md). 
 
 As with `ocaml-language-server`, this is not intended as a replacement for any existing Reason / OCaml tooling, but to make it more accessible across editors.
 
@@ -69,7 +69,7 @@ In the future, perhaps we could integrate this more fully into `merlin` at some 
         - [ ] `definition`
         - [ ] `implementation`
         - [ ] `references`
-        - [ ] `singatureHelp`
+        - [ ] `signatureHelp`
         - [ ] `codeAction`?
         - [ ] `codeLens`
         - [ ] `formatting`
