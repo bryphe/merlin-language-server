@@ -66,6 +66,13 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
     | Some(v) => Ok(Protocol.Response.hover_to_yojson(v))
     | None => Ok(`Null)
     }
+  | TextDocumentDefinition(_tdp) => 
+    /* let%bind merlin = getMerlin(); */
+    let location = Protocol.Types.Location.create(
+    Protocol.Utility.pathToUri("E:\\merlin-language-server\\src\\bin\\Merlin_language_server.re"),
+    Protocol.Types.Range.create(Protocol.Types.Position.create(0, 0), Protocol.Types.Position.create(0, 100)),
+    );
+    Ok(Protocol.Types.location_to_yojson(location));
   | Initialize(initMsg) =>
     merlin := Server.MerlinDiscovery.discover(initMsg.rootUri)
     Ok(Protocol.Response.initializeResult_to_yojson(initializeInfo))

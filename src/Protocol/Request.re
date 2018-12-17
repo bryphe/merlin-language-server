@@ -13,6 +13,7 @@ type request =
   | Shutdown
   | TextDocumentHover(Types.textDocumentPositionParams)
   | TextDocumentCompletion(Types.textDocumentPositionParams)
+  | TextDocumentDefinition(Types.textDocumentPositionParams)
   /* Debug requests - internal use / debugging only */
   | DebugEcho(Types.debugEchoParams)
   | DebugTextDocumentGet(Types.textDocumentPositionParams)
@@ -35,6 +36,10 @@ let parse = (msg: Yojson.Safe.json) => {
     Types.textDocumentPositionParams_of_yojson(params)
     |> Utility.getResultOrThrow
     |> TextDocumentCompletion
+  | "textDocument/definition" =>
+    Types.textDocumentPositionParams_of_yojson(params)
+    |> Utility.getResultOrThrow
+    |> TextDocumentDefinition
   | "textDocument/hover" =>
     Types.textDocumentPositionParams_of_yojson(params)
     |> Utility.getResultOrThrow
