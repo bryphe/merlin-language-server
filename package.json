@@ -33,6 +33,7 @@
     "rench": "*"
   },
   "resolutions": {
+    "@opam/ppx_deriving_yojson": "3.1",
     "@esy-ocaml/reason": "facebook/reason#ab49908",
     "@opam/menhir": "20171013",
     "@opam/re": "1.7.3",
