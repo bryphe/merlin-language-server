@@ -24,6 +24,7 @@ let checkErrors = (rpc, uri: Protocol.Types.documentUri) => {
         }
     };
 };
+
 let onNotification = (notification: Protocol.Notification.t, rpc) =>
   switch (notification) {
   | TextDocumentDidOpen(v) => 
@@ -33,7 +34,7 @@ let onNotification = (notification: Protocol.Notification.t, rpc) =>
         DocumentStore.changeDocument(documentStore, v);
         checkErrors(rpc, v.textDocument.uri);
   | Exit => Protocol.Rpc.stop(rpc)
-  | _ => Log.error("Merlin_language_server::onNotification - Unhandled notification!")
+  | _ => Protocol.Log.error("Merlin_language_server::onNotification - Unhandled notification!")
   };
 
 let initializeInfo: Protocol.Response.initializeResult = {
