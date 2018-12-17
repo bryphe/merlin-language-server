@@ -33,7 +33,7 @@ let onNotification = (notification: Protocol.Notification.t, rpc) =>
         DocumentStore.changeDocument(documentStore, v);
         checkErrors(rpc, v.textDocument.uri);
   | Exit => Protocol.Rpc.stop(rpc)
-  | _ => prerr_endline("Unhandled notification!")
+  | _ => Log.error("Merlin_language_server::onNotification - Unhandled notification!")
   };
 
 let initializeInfo: Protocol.Response.initializeResult = {
@@ -45,7 +45,7 @@ let initializeInfo: Protocol.Response.initializeResult = {
 let getMerlin = () => {
     switch(merlin^) {
     | Some(m) => Ok(m)
-    | None => Error("Unable to get merlin instance")
+    | None => Error("Merlin_language_server::getMerlin - Unable to get merlin instance")
     };
 }
 
@@ -85,4 +85,4 @@ let onRequest = (_rpc, request: Protocol.Request.t) => {
 
 Protocol.Rpc.start(~onNotification, ~onRequest, stdin, stdout);
 
-prerr_endline("Closing");
+Protocol.Log.verbose("Closing");

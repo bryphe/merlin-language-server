@@ -69,6 +69,7 @@ let getTokenAt =
   | None => None
   | Some(l) =>
     /* Get first space prior to token */
+    Log.debug("DocumentStore::getTokenAt: |" ++ l ++ "| character: " ++ string_of_int(position.character));
     let firstPriorSpace =
       switch (String.rindex_from_opt(l, position.character, ' ')) {
       | v => v

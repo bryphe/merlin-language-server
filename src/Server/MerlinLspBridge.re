@@ -99,7 +99,7 @@ let errors =
 
     switch (errors) {
     | Error(msg) =>
-      prerr_endline("ERROR: " ++ msg);
+      LspProtocol.Log.error(msg);
       None;
     | Ok(e) => List.map(merlinErrorToLspError, e) |> Some
     };

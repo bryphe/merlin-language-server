@@ -58,7 +58,7 @@ let findMerlinWithEsy = rootUri => {
     let p = Protocol.Utility.uriToPath(rootUri);
     let suffix = Sys.win32 ? ".cmd" : "";
     let esy = esy ++ suffix;
-    prerr_endline("LOOKING FOR MERLIN WITH ESY IN: " ++ p);
+    Protocol.Log.info("MerlinDiscovery::findMerlinWithEsy - using esy: " ++ p);
     let merlinPath = getBinaryFromEsySandbox(p, esy, "ocamlmerlin");
     let reasonPath = getBinaryFromEsySandbox(p, esy, "ocamlmerlin-reason");
     createMerlinFromPaths(merlinPath, reasonPath);
