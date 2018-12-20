@@ -7,6 +7,17 @@ open Protocol.Ppx_let_syntax_result;
 let documentStore = DocumentStore.create();
 let merlin: ref(option(Merlin.t)) = ref(None);
 
+let test = Sexplib.Sexp.of_string("()");
+print_endline ("TESTING");
+
+open Sexplib.Std;
+
+[@deriving sexp]
+type string_list = list(string);
+
+let v = sexp_of_string_list(["E:/merlin-language/.ppx/ppx.exe", "--as-ppx", "--cookie", "library-name=Protocol Test"]);
+print_endline ("HELLO: " ++ Sexplib.Sexp.to_string(v));
+
 let sendErrors = (rpc, uri: Protocol.Types.documentUri, diagnostics: Protocol.Types.diagnostics) => {
     let errorJson = Protocol.Types.diagnostics_to_yojson(diagnostics);
     let error = `Assoc([("uri", `String(uri)), ("diagnostics", errorJson)]);
