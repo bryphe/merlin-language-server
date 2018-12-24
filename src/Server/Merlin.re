@@ -102,7 +102,7 @@ let _run = (~input: string, merlin: t, command: array(string)) => {
   let currentPath = EnvironmentVariables.getValue(env, "PATH");
   let augmentedPath =
     switch (currentPath) {
-    | Some(v) => additionalPaths ++ ";" ++ v
+    | Some(v) => additionalPaths ++ Rench.Path.pathSeparator ++ v
     | None => additionalPaths
     };
 

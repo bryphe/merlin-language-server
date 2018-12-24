@@ -56,6 +56,7 @@ let start =
 
     let preamble = Preamble.read(input);
     let len = preamble.contentLength;
+    Log.debug("Message length: " ++ string_of_int(len));
 
     /* Read message */
     let buffer = Bytes.create(len);
