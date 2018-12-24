@@ -14,9 +14,12 @@ let createMerlinFromPaths =
     | None => []
     };
 
+  // Once #13 is fixed, we can always use server!
+  let singleOrServer = Sys.win32 ? Merlin.Single : Merlin.Server;
+
   switch (merlinPath) {
   | None => None
-  | Some(x) => Some(Merlin.init(Merlin.Single, x, additionalPaths))
+  | Some(x) => Some(Merlin.init(singleOrServer, x, additionalPaths))
   };
 };
 

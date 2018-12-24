@@ -40,6 +40,9 @@ let onNotification = (notification: Protocol.Notification.t, rpc) =>
 let initializeInfo: Protocol.Response.initializeResult = {
   capabilities: {
     textDocumentSync: 0,
+    completionProvider: {
+        resolveProvider: false,
+    }
   },
 };
 
