@@ -1,12 +1,13 @@
 /* module Types = Types; */
 
 [@deriving yojson({strict: false})]
-type completionOptions = {
-    resolveProvider: bool,
-};
+type completionOptions = {resolveProvider: bool};
 
 [@deriving yojson({strict: false})]
-type serverCapabilities = {textDocumentSync: int, completionProvider: completionOptions};
+type serverCapabilities = {
+  textDocumentSync: int,
+  completionProvider: completionOptions,
+};
 
 [@deriving yojson({strict: false})]
 type initializeResult = {capabilities: serverCapabilities};

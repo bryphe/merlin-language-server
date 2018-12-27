@@ -62,8 +62,8 @@ let start =
     let buffer = Bytes.create(len);
     let read = ref(0);
     while (read^ < len) {
-        let n = Pervasives.input(input, buffer, 0, len);
-        read := read^ + n;
+      let n = Pervasives.input(input, buffer, 0, len);
+      read := read^ + n;
     };
 
     let str = Bytes.to_string(buffer);
