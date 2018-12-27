@@ -59,7 +59,11 @@ let start =
 
     /* Read message */
     let buffer = Bytes.create(len);
-    let _ = Pervasives.input(input, buffer, 0, len);
+    let read = ref(0);
+    while (read^ < len) {
+        let n = Pervasives.input(input, buffer, 0, len);
+        read := read^ + n;
+    };
 
     let str = Bytes.to_string(buffer);
     Log.debug("Received msg: " ++ str);
