@@ -20,7 +20,7 @@
     "@opam/dune": "*",
     "@opam/lambda-term": "*",
     "@opam/lwt": "^4.0.0",
-    "ocaml": "~4.6.0",
+    "ocaml": "~4.7.0",
     "@opam/merlin": "^3.2.2",
     "@opam/ppx_deriving": "*",
     "@opam/ppx_pipebang": "*",
@@ -33,14 +33,11 @@
     "rench": "*"
   },
   "resolutions": {
-    "@opam/ppx_deriving_yojson": "3.1",
-    "@esy-ocaml/reason": "facebook/reason#ab49908",
-    "@opam/menhir": "20171013",
     "@opam/re": "1.7.3",
-    "rench": "bryphe/rench#d877058"
+    "rench": "github:bryphe/rench#12fd3dd"
   },
   "devDependencies": {
     "@opam/merlin": "^3.2.2",
-    "ocaml": "~4.6.0"
+    "ocaml": "~4.7.0"
   }
 }
