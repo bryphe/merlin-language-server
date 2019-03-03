@@ -2,7 +2,7 @@ open TestFramework;
 
 module Preamble = Protocol.Preamble;
 
-describe("Preamble", ({test, describe}) => {
+describe("Preamble", ({test, describe, _}) => {
   test("hasContentLengthHeader", ({expect}) => {
     expect.bool(Preamble.hasContentLengthHeader("Content-Length: 100")).toBe(
       true,
