@@ -44,7 +44,7 @@ module Position = {
   };
 };
 
-/* TODO: Refactor */
+/* TODO: Refactor instances to use Position.t */
 [@deriving yojson({strict: false})]
 type position = Position.t;
 
@@ -62,6 +62,25 @@ module Range = {
     ret;
   };
 };
+
+module Location = {
+  [@deriving yojson({strict: false})]
+   type t = {
+      uri: documentUri,
+      range: Range.t,
+   }; 
+
+   let create = (uri, range) => {
+        let ret = {
+            uri,
+            range,
+        };
+        ret;
+   };
+};
+
+[@deriving yojson({strict: false})]
+type location = Location.t;
 
 [@deriving yojson({strict: false})]
 type textDocumentIdentifier = {uri: documentUri};
